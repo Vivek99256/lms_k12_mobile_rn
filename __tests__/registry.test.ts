@@ -3,6 +3,7 @@ import { AcademicCalendarScreen } from '../src/screens/student/AcademicCalendarS
 import { AttendanceScreen } from '../src/screens/student/AttendanceScreen';
 import { CircularsScreen } from '../src/screens/student/CircularsScreen';
 import { ExamScheduleScreen } from '../src/screens/student/ExamScheduleScreen';
+import { FeesSummaryScreen } from '../src/screens/student/FeesSummaryScreen';
 import { HolidayListScreen } from '../src/screens/student/HolidayListScreen';
 import { HomeworkScreen } from '../src/screens/student/HomeworkScreen';
 import { NotificationHubScreen } from '../src/screens/student/NotificationHubScreen';
@@ -31,11 +32,16 @@ describe('screenRegistry', () => {
     expect(screenRegistry.home_work).toBe(HomeworkScreen);
   });
 
+  it('maps the S6a tile to the fees summary screen', () => {
+    expect(screenRegistry.fees).toBe(FeesSummaryScreen);
+  });
+
   it('has exactly the registered student screens and claims no staff names (they keep their existing fallback)', () => {
     expect(Object.keys(screenRegistry).sort()).toEqual([
       'academic_calendar',
       'circular_events',
       'exam_schedule',
+      'fees',
       'holiday_list',
       'home_work',
       'notification_hub',

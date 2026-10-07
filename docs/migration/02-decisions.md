@@ -180,3 +180,27 @@ A workaround is allowed only if it is safe, stable, maintainable, and does **not
 - **Device verification:** the coordinated S1–S4a pass still requires your **explicit approval**; do not create the native Android project or run the emulator yet.
 - **Next module:** S6 — Fees. Document first; do not build. **No payment, receipt download or any financial mutation** unless the S6 document explicitly identifies that scope and you separately approve it.
 
+
+## S6 proposals (2026-10-07, awaiting your answers)
+- **Q24 / S6-D1** go/no-go for S6a. A (recommended): build the view-only summary; honest error if the backend defect hits. B: record S6 as backend-blocked and move to S5.
+- **Q25** S6-D2 legacy `fees/PaidUnpaid` only; D3 INR with Indian grouping (currency is an assumption); D4 whole-year "Pending" label; D5 overpayment shown as "Paid in advance"; D6 honest closing note, no pay/receipt controls; D7 never call `studentFeesDetailAPI`, `pending_fees`, `ajax_PDF_FeesReceipt`, `get_online_receipt`.
+- **Q26** S6b/S6c/S6d not proposed; S6c/S6d are financial scopes needing separate approval.
+- **Q16** stays OPEN.
+
+## Answers received (2026-10-07, S6 approval)
+- **Q24** option A — build S6a now: view-only whole-year summary (total, paid, pending). No payment, receipt, download, payment link or financial mutation. The `PaidUnpaid` backend defect is a documented limitation; Laravel is not modified.
+- **Q25** yes — S6-D2…D7 as documented, with the constraints: INR/Indian formatting; figures labelled whole-year totals; pending = the API's balance; no real-time claim; no payment controls; F1 form-encoded transport; never `studentFeesDetailAPI`, `fees/get_online_receipt`, `ajax_PDF_FeesReceipt` or `pending_fees`.
+- **Q26** S6b/S6c/S6d are neither documented nor built: S6b later / backend-dependent; S6c later / separate financial-scope approval; S6d later / separate financial-action approval.
+- **Q16** remains OPEN. **Device pass:** deferred; no native Android project.
+
+## S6a implementation notes (2026-10-07)
+- Built as approved; deviations are listed in the S6 document §17 (own no-retry query instead of `useStudentQuery`, negative formatting, stricter amount parsing, floored percent, wording).
+- **Open:** review and sign-off of S6a; commit approval; the coordinated device pass (explicit approval needed); next sub-module; whether a real-data check or a backend fix will settle the `PaidUnpaid` defect.
+
+## Answers received (2026-10-07, S6a sign-off → S5)
+- **S6a:** signed off as done; commit approved (S6a code, tests and documentation only). The `PaidUnpaid` backend defect remains a backend issue and is not to be fixed as part of this migration. **S6b, S6c, S6d remain future scope and are NOT approved.**
+- The transient `text.test.ts` timing failure is accepted (parallel-run observation; final full run 476/476; passes alone).
+- **Q16:** stays OPEN — real student data and real fee records off-limits; the remote database is treated as potentially production.
+- **Device pass:** the coordinated S1–S6a pass stays deferred; no native Android project.
+- **Next module:** S5 — Student Results (document first; do not build).
+

@@ -14,8 +14,11 @@ Single source of status. Updated at the end of every reply. Rules and rationale:
 - **Step 3 — Document S4a: APPROVED** (2026-10-07; Q23 yes, D1/D2 modern API with no legacy fallback, D6 AI score when evaluated).
 - **Step 4 — Build S4a: DONE, signed off 2026-10-07.** Committed on branch `migration/s4a-homework-view`. S4b is NOT approved and not started.
 
+- **Step 3 — Document S6 (fees): APPROVED** (2026-10-07; Q24 option A, Q25 S6-D2…D7 yes, Q26 S6b/c/d future scope only).
+- **Step 4 — Build S6a: DONE, signed off 2026-10-07.** Committed on branch `migration/s6a-fees-summary`. The `PaidUnpaid` backend defect stays a backend issue. S6b/c/d are NOT approved.
+
 ## Waiting on you
-Review and sign off S4a (or tell me what to change) and separately approve its commit. **Q16 stays open** (no real student data). The coordinated S1–S4a device pass still needs your explicit approval of the native build. Choose the next sub-module (build order: S6a/b fees → S5 results → S7 leave and communication → S9 → S10 → S8 → S13; S4b needs the F5 picker libraries first).
+Choose the next sub-module (S5 results is next in the approved order). **Q16 stays open** (no real student data). The coordinated S1–S6a device pass still needs your explicit approval of the native build. S4b and S6b/c/d are not approved.
 
 ## Legend
 Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (web-only). Status: `planned → doc-approved → built → verified → done`. Statuses: F1 and S2 are `done`; S1 is `done`; S3 is `done`; S4a is `done`; everything else `planned`.
@@ -38,9 +41,10 @@ Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (
 | S4a | Homework list/detail (view only) | V1 | modern API needs a current academic year; list unpaged; real data unverified | F1, S1 | [S4a](modules/S4a-homework-view.md) | DONE (signed off 2026-10-07); real-data and device checks deliberately pending (Q16; coordinated pass) |
 | S4b | Homework submit (upload) | V1 | – | S4a,F5 | – | planned |
 | S5 | Results PDF, WRT progress | V1 | heavy/unsafe PDF endpoints | F1,F3 | – | planned |
-| S6a | Fees summary/detail | V1 | needs `type=API`; year row required | F1,F3 | – | planned |
-| S6b | Fee receipt PDF | V1 | quoted-URL response | S6a | – | planned |
-| S6c | Online payment | V1 (web-handoff) | gateway HTML | S6a | – | planned |
+| S6a | Fees summary (view only, whole-year totals) | V1 (at risk) | legacy `fees/PaidUnpaid`; probable 500 for most students (join defect, documented not fixed); no modern API | F1, S1 | [S6](modules/S6-fees.md) | DONE (signed off 2026-10-07); real-data and device checks deliberately pending (Q16; coordinated pass) |
+| S6b | Month-wise dues, paid-receipt list | V1 | Later / backend-dependent: `studentFeesDetailAPI` broken and unsafe | S6a | [S6](modules/S6-fees.md) §3, §9 | future scope; not documented |
+| S6c | Receipt view/download (financial document) | V1 | Later / separate financial-scope approval required | S6a | [S6](modules/S6-fees.md) §3 | future scope; not documented |
+| S6d | Online payment (financial action) | V1 (web-handoff) | Later / separate financial-action approval required | S6a | [S6](modules/S6-fees.md) §3 | future scope; not documented |
 | S7a | Leave list, parent communication list, subject teachers | V1 | needs `type` / `type=API` | F1,F3 | – | planned |
 | S7b | Leave apply (attachment), send communication | V1 | separate submit route; `attechment` | S7a,F5 | – | planned |
 | S8a | Learn (subjects/content), social collaborative | V1 | content route unread | F1,F3 | – | planned |
@@ -94,7 +98,7 @@ Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (
 fees reports/masters/NACH · lms exam builder & analytics · pal staff authoring · h5p · student CRUD/reports/ID cards/certificates · result report cards/reports/masters · hrit policy & payroll · talent-management, organization-management, people-competency, capability-intelligence · enterprise-brain, ai, platform-* · Inventory/Transportation/hostel/library masters · front_desk masters · admin-services petty cash/consent master · easy_com gateway config · general, academic_setup, user, integration, Utility, teach-learn, imports, builders, authoring, placeholders. Nothing is dropped silently: each is listed in 03 §3.4.
 
 ## Baseline facts
-- Mobile repo after S4a: `npm run typecheck` clean; `jest` 40 suites, **411 passed, 16 skipped (opt-in local tests), 0 failed** (after S3: 315; after S1: 232; F1+S2: 100; original: 20). `npx expo export` for Android still bundles (1063 modules).
+- Mobile repo after S6a: `npm run typecheck` clean; `jest` 45 suites (40 run, 5 opt-in skipped), **476 passed, 20 skipped (opt-in local tests), 0 failed** (after S4a: 411; S3: 315; S1: 232; F1+S2: 100; original: 20). One load-sensitive timing test in `text.test.ts` failed once under a parallel run and passes alone.
 - Laravel and Next.js: read-only; not modified by this work.
 - Database: only `SELECT` run, only on `mobile_homescreen` and `teacher_mobile_homescreen`.
 
@@ -119,3 +123,6 @@ fees reports/masters/NACH · lms exam builder & analytics · pal staff authoring
 | 2026-10-07 | S3 signed off and committed (7b4e45e, branch migration/s3-timetable-exam-schedule); pre-commit scan clean; S1/S2 source changed by additions only. |
 | 2026-10-07 | S4a research (legacy and modern homework endpoints, web student screens, Flutter reference, local probes with synthetic ids) and S4a document written. Awaiting approval. |
 | 2026-10-07 | S4a approved (Q23). S4a built, view only: filters, due-date sort, expandable detail, remarks/AI-score gating, HTML→text, 30-row batches; 96 new tests; 411 passing; local verification with synthetic ids over real HTTP (16/16 opt-in tests); S4a document updated with actuals. Awaiting review; uncommitted. |
+| 2026-10-07 | S6 research (fee endpoints, web/Flutter/menu evidence, local probes with synthetic ids, PHP semantic checks) and S6 document written. Proposes S6a only; S6b/c/d identified, not proposed. Awaiting approval. |
+| 2026-10-07 | S6 approved (Q24 option A, Q25 yes, Q26 future scope only). S6a built, view only: ₹ Indian formatting, whole-year labels, no-retry query, fee-specific 500 message, strict amount parsing; 65 new tests; 476 passing; local verification with synthetic ids over real HTTP (4/4 opt-in tests); backend defect documented with evidence, not fixed; S6 document updated with actuals. Awaiting review; uncommitted. |
+| 2026-10-07 | S6a signed off (DONE) and committed on branch migration/s6a-fees-summary. The one transient text.test.ts timing failure is accepted as a parallel-run observation (final full run 476/476). |

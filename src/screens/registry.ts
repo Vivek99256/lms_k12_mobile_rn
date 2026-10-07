@@ -4,6 +4,7 @@ import { AcademicCalendarScreen } from './student/AcademicCalendarScreen';
 import { AttendanceScreen } from './student/AttendanceScreen';
 import { CircularsScreen } from './student/CircularsScreen';
 import { ExamScheduleScreen } from './student/ExamScheduleScreen';
+import { FeesSummaryScreen } from './student/FeesSummaryScreen';
 import { HolidayListScreen } from './student/HolidayListScreen';
 import { HomeworkScreen } from './student/HomeworkScreen';
 import { NotificationHubScreen } from './student/NotificationHubScreen';
@@ -29,6 +30,8 @@ export const screenRegistry: Record<string, TileScreenComponent> = {
   exam_schedule: ExamScheduleScreen,
   // S4a - homework list/detail, view only (lms-homework/my-submissions, lms-homework/detail/{id})
   home_work: HomeworkScreen,
+  // S6a - fees summary, view only (fees/PaidUnpaid, legacy form-encoded; no payment or receipt)
+  fees: FeesSummaryScreen,
 };
 
 export function registerScreens(entries: Record<string, TileScreenComponent>) {

@@ -395,3 +395,47 @@ export async function fetchHomeworkDetail(id: string): Promise<HomeworkDetail> {
   const res = await api.post<unknown>(`api/lms-homework/detail/${id}`);
   return parseHomeworkDetail(res.data);
 }
+
+// ---------------------------------------------------------------------------------------------
+// S6a - student fees summary (VIEW ONLY). Legacy `fees/PaidUnpaid` is the only usable endpoint: no modern student fee
+// API exists. studentFeesDetailAPI, pending_fees, ajax_PDF_FeesReceipt and fees/get_online_receipt are deliberately
+// never called (docs/migration/modules/S6-fees.md §3). Nothing here writes or fetches a receipt or payment link.
+// ---------------------------------------------------------------------------------------------
+
+/** Whole-year fee totals, in rupees. `unpaid` can be negative (paid more than the total). */
+export interface FeeSummary {
+  total: number;
+  paid: number;
+  unpaid: number;
+}
+
+/** A fee amount: a finite number or a plain decimal string. Empty, null, booleans and other text are NOT zero - they are unreadable. */
+function feeAmount(v: unknown): number {
+  const n = typeof v === 'number' ? v : typeof v === 'string' && /^\s*-?\d+(\.\d+)?\s*$/.test(v) ? Number(v) : NaN;
+  if (!Number.isFinite(n) || Math.abs(n) > 1e12) throw new ApiError('server', 'The fees summary has an unexpected format.');
+  return n;
+}
+
+/** Reads `response.{breack_off_amount, paid_amount, unpaid_amount}` (the controller's spelling) from a PaidUnpaid body. */
+export function parseFeeSummary(raw: unknown): FeeSummary {
+  const r = isRecord(raw) && isRecord(raw.response) ? raw.response : null;
+  if (!r) throw new ApiError('server', 'The fees summary has an unexpected format.');
+  return { total: feeAmount(r.breack_off_amount), paid: feeAmount(r.paid_amount), unpaid: feeAmount(r.unpaid_amount) };
+}
+
+/** The server's wording when the year or the fee structure is missing (`year_error` / `bf_error`). */
+export const NO_FEE_DATA_MESSAGE = 'Data Not Found.';
+
+/**
+ * `POST fees/PaidUnpaid` (routes/fees.php:258; fees_collect_controller.php:2002-2192), form-encoded by F1.
+ * Returns null when the server says there is no fee data for the year. The student and tenant come from the session only.
+ */
+export async function fetchFeeSummary(): Promise<FeeSummary | null> {
+  try {
+    const res = await legacy.post<unknown>('fees/PaidUnpaid');
+    return parseFeeSummary(res.raw);
+  } catch (e) {
+    if (e instanceof ApiError && e.kind === 'validation' && e.message.trim() === NO_FEE_DATA_MESSAGE) return null;
+    throw e;
+  }
+}
