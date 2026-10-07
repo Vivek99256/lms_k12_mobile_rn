@@ -26,10 +26,12 @@ Single source of status. Updated at the end of every reply. Rules and rationale:
 - **Step 4 — Build S10a: DONE, signed off 2026-10-07.** Committed as 9ab44e1 on branch `migration/s10-school-info-galleries`. S10b (classwork gallery) stays blocked on the backend ([security ask](backend-asks/S10-classwork-credential-exposure.md)).
 - **Step 3 — Document S8 (learning): APPROVED** (2026-10-07; Q39 option B, Q40 S8-D2…D7 with clarifications, Q41 S9c added to the plan, Q42 Learn-content backend ask).
 - **Step 4 — Build S8a + S8c: DONE, signed off 2026-10-07.** Committed as bd1e4f4 on branch `migration/s8-learning` (including the approved additive F1 `bearerOnly` option). S8b Learn stays blocked on the backend ([ask](backend-asks/S8-learn-content-endpoint.md)).
-- **Step 4 — Build S9c (Student Discipline): DONE, signed off 2026-10-07.** Committed on branch `migration/s9c-student-discipline` (view only, S9 memory-only handling).
+- **Step 4 — Build S9c (Student Discipline): DONE, signed off 2026-10-07.** Committed as e6bd04f on branch `migration/s9c-student-discipline` (view only, S9 memory-only handling).
+- **Step 3 — Document S13 (profile): APPROVED** (2026-10-07; Q43 option A, Q44 S13-D2…D6 with the mandatory fail-closed identity cross-check, Q45 backend ask).
+- **Step 4 — Build S13a (My details): DONE, signed off 2026-10-07.** Committed on branch `migration/s13-profile`. S13b (edit / password / photo) is not approved. **Every module in the approved build order is now done or recorded as future / blocked.**
 
 ## Waiting on you
-Review the S13 (Profile) scope/design (document to follow) and approve or adjust it. **Q16 stays open and is applied strictly.** The coordinated S1–S10 device pass stays deferred and needs your explicit approval of the native build. S4b, S5b/c/d, S6b/c/d, S7d/e, S8b, S9b and S10b are not approved.
+The next step is a coordinated Device / Native Pass: a dedicated scope document follows, and nothing native is started until you give explicit approval. **Nothing else is started automatically.** **Q16 stays open and strict.** S4b / file-picker work and backend-fix follow-ups remain separate future work.
 
 ## Legend
 Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (web-only). Status: `planned → doc-approved → built → verified → done`. Statuses: F1 and S2 are `done`; S1 is `done`; S3 is `done`; S4a is `done`; everything else `planned`.
@@ -77,7 +79,7 @@ Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (
 | S10b | Classwork gallery | V1⛔ | blocked: `front_desk/send_attachment/create` embeds whole `tbluser`/`tblstudent` rows (incl. `password`, `plain_password`, `otp`) in every row and lists all students when `student_id` is omitted; tile shows "This isn't available in the app yet." and the endpoint is never contacted | – | [S10](modules/S10-school-info-galleries.md) §3, §10; [security ask](backend-asks/S10-classwork-credential-exposure.md) | blocked on backend; message only |
 | S11 | Face-capture photos | Later | no recognition backend | F5 | – | planned |
 | S12 | Adaptive learning (PAL/ESO) | Later | ESO nodes tenant 1 only | – | – | planned |
-| S13 | Profile | V1 | – | F1 | – | planned |
+| S13 | Profile — on-demand "My details" (view only) | V1 | `GET api/own-profile` (token-bound, 422 without a current year); backend can return another person's record when the student profile is not named exactly "Student" → client identity cross-check, fail closed | F1 (`bearerOnly`) | [S13](modules/S13-profile.md) | DONE (signed off 2026-10-07); real-data and device checks deliberately pending (Q16; coordinated pass) |
 
 ## Teacher
 | ID | Sub-module | Class | Backend flag | Depends | Doc | Status |
@@ -119,7 +121,7 @@ Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (
 fees reports/masters/NACH · lms exam builder & analytics · pal staff authoring · h5p · student CRUD/reports/ID cards/certificates · result report cards/reports/masters · hrit policy & payroll · talent-management, organization-management, people-competency, capability-intelligence · enterprise-brain, ai, platform-* · Inventory/Transportation/hostel/library masters · front_desk masters · admin-services petty cash/consent master · easy_com gateway config · general, academic_setup, user, integration, Utility, teach-learn, imports, builders, authoring, placeholders. Nothing is dropped silently: each is listed in 03 §3.4.
 
 ## Baseline facts
-- Mobile repo after S9c: `npm run typecheck` clean; `jest` 76 suites (65 run, 11 opt-in skipped), **1028 passed, 44 skipped (opt-in local tests), 0 failed** (after S8: 994; S10: 916; S9: 814; S7: 638; S5a: 543; S6a: 476; S4a: 411; S3: 315; S1: 232; F1+S2: 100; original: 20).
+- Mobile repo after S13: `npm run typecheck` clean; `jest` 80 suites (68 run, 12 opt-in skipped), **1084 passed, 48 skipped (opt-in local tests), 0 failed** (after S9c: 1028; S8: 994; S10: 916; S9: 814; S7: 638; S5a: 543; S6a: 476; S4a: 411; S3: 315; S1: 232; F1+S2: 100; original: 20).
 - Laravel and Next.js: read-only; not modified by this work.
 - Database: only `SELECT` run, only on `mobile_homescreen` and `teacher_mobile_homescreen`.
 
@@ -165,3 +167,6 @@ fees reports/masters/NACH · lms exam builder & analytics · pal staff authoring
 | 2026-10-07 | S8a + S8c committed as bd1e4f4. S9c (Student Discipline, view only) built: 34 new tests, 1028 passing; local verification with a non-existent student asserted the count only (3/3 opt-in tests; server log: only `/studentDisciplineAPI`). Awaiting review; uncommitted. |
 | 2026-10-07 | S9c (Student Discipline) signed off (DONE) and committed on branch migration/s9c-student-discipline. |
 | 2026-10-07 | Pre-commit test runs of S9c: of four full-suite runs, two each had one different test fail once under heavy parallel load (a first-render async wait in `RecordScreens` and in `DisciplineScreen`); both suites pass alone (99/99 twice; 15/15) and the final full run was 1028 passed, 0 failed. Recorded as transient parallel-run timing observations (like the earlier `text.test.ts` one); no logic failure. |
+| 2026-10-07 | S9c committed as e6bd04f (pre-commit full-suite runs: two had one different first-render async test fail once under heavy parallel load; both suites pass alone and the final full run was 1028 passed, 0 failed). S13 (Profile) research from code only — no probe — and S13 scope/design document written. Awaiting approval. |
+| 2026-10-07 | S13 approved (Q43 option A, Q44 with the fail-closed identity check, Q45 backend ask). S13a built: on-demand My details card, 56 new tests, 1084 passing; local verification with a non-existent user asserted statuses only (404 / 422 / 401 and a bare bearer-only GET; 4/4 opt-in tests). Backend ask for the role-detection / wrong-person / academic-year issues written. Awaiting review; uncommitted. |
+| 2026-10-07 | S13a signed off (DONE) and committed on branch migration/s13-profile. All planned modules are done or recorded as future / blocked. The next step is a Device / Native Pass scope document (nothing native is started without explicit approval). |

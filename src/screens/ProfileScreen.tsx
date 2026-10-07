@@ -2,16 +2,26 @@ import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Updates from 'expo-updates';
-import React from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '../auth/authStore';
 import { Button, Card, Page } from '../components/ui';
 import { colors, fonts, gradients, radius, spacing } from '../config/theme';
+import { OWN_PROFILE_KEY } from '../hooks/useOwnProfile';
+import { MyDetails } from './profile/MyDetails';
 
 export function ProfileScreen() {
   const user = useAuthStore((s) => s.user);
   const signOut = useAuthStore((s) => s.signOut);
+  const queryClient = useQueryClient();
+  // "My details" are fetched only after an explicit tap and removed from memory the moment they are hidden.
+  const [showDetails, setShowDetails] = useState(false);
+  const hideDetails = () => {
+    queryClient.removeQueries({ queryKey: OWN_PROFILE_KEY });
+    setShowDetails(false);
+  };
 
   const initials = (user?.name ?? '?')
     .split(' ')
@@ -66,6 +76,7 @@ export function ProfileScreen() {
               </View>
             ))}
           </Card>
+          {showDetails ? <MyDetails onHide={hideDetails} /> : <Button title="Show my details" variant="secondary" onPress={() => setShowDetails(true)} />}
           <Button title="Sign out" variant="secondary" onPress={() => void signOut()} />
         </View>
       </Page>

@@ -334,3 +334,24 @@ How it was applied in S8: the local test requests the discussion list only with 
 - **Q16:** stays open and strict: no real database row is to be intentionally retrieved or inspected; synthetic / non-existent ids only; no broad endpoints to discover response shapes; if a synthetic request unexpectedly returns real data, stop and report it. **Device pass:** deferred.
 - **Next module:** the next planned module (S13 — Profile) — present its scope/design and stop for approval before implementation.
 
+## S13 proposals (2026-10-07, awaiting your answers)
+- **Q43 / S13-D1** scope. A (recommended): add the on-demand **My details** card to the Profile tab (view only). B: leave the Profile tab as it is (session-only) and close S13 as "no change needed". C: auto-load the details on open (more exposure; not recommended).
+- **Q44** S13-D2 `GET api/own-profile` only, via `bearerOnly`, no fallback; D3 loaded only on **Show my details**, dropped on **Hide** (`gcTime: 0`); D4 mandatory identity cross-check (email, else name) that fails closed; D5 rows: mobile (plain text), date of birth, admission/joining year, address, blanks omitted, no id / image / role / school re-shown; D6 nothing logged, persisted, shared or exported, no photo, no write.
+- **Q45** write up the S13 §13 backend items (above all the possible wrong-person lookup at `OwnProfileApiController.php:17`) as a separate backend ask; no Laravel change.
+- **Q16** stays OPEN and strict; the S13 research made no probe at all.
+
+## Answers received (2026-10-07, S13 approval)
+- **Q43** option A — the on-demand "My details" card (Mobile, Birthdate, Admission year for students / Joining year for staff, Address); it loads **only** after the user taps "Show my details".
+- **Q44** yes — S13-D2…D6. **Critical:** the identity cross-check is mandatory and fail-closed — the response must match the signed-in user's email case-insensitively; if the server email is empty the full name must match; if neither matches show "Your details can't be shown right now." and display no field of the rejected response; never fall back to showing it; never attempt another person's id. Privacy: load only on explicit action; "Hide details" removes the record from memory immediately; nothing persisted, cached, logged or shared; no profile images; no server id, role or school displayed; mobile number plain text, never tappable; blanks omitted, nothing invented. Authentication: modern token-bound `GET api/own-profile` with the approved `bearerOnly`; the JWT never in the URL; no student / staff id sent; the 422 academic-year case handled explicitly and safely; no legacy fallback. **S13b (editing, password change, photo change, any write) is not approved.**
+- **Q45** yes — [backend-asks/S13-own-profile.md](backend-asks/S13-own-profile.md): student/staff detection by the exact profile name "Student", the possible wrong-person lookup, the need to authorize by the authenticated user's real role/type rather than display text, the academic-year dependency. No Laravel change.
+- **Q16** remains strictly open (no real-data probes; synthetic ids only; never inspect real response bodies; stop and report if a synthetic request returns real data). **Device pass:** deferred.
+
+## S13 implementation notes (2026-10-07)
+- Built as approved; deviations are in the S13 document §15 (the request carries no query parameter at all; the identity check runs inside the query function so a rejected record is never cached; a name-only match is deliberately strict).
+- **Open:** review and sign-off of S13a; commit approval; what comes next now that every planned module is done or recorded as future / blocked; the coordinated device pass (explicit approval needed).
+
+## Answers received (2026-10-07, S13a sign-off → device pass)
+- **S13a:** signed off as done; commit approved (the My Details card, Show/Hide memory lifecycle, fail-closed identity cross-check, profile API/model/hook changes, S13 tests and documentation, the backend ask, and the tracker/decision/README updates; no Laravel, editing, password / photo change or other write functionality, device/native changes, secrets or generated files). Approved explicitly: bare GET to `api/own-profile`, JWT in the Authorization header only, no query parameters, no legacy fallback, email match as the primary check, name match only when the server email is empty, reject and expose nothing on mismatch, `gcTime: 0`, synchronous query removal on Hide, no logging / persistence / sharing / exporting, no image fetching.
+- **Q16:** remains open and strict. **No further feature implementation starts automatically.**
+- **Next step:** a coordinated Device / Native Pass — first a dedicated scope document covering the checks listed in your message; **the native build is not started** until you explicitly approve the pass. S4b / file-picker work and backend-fix follow-ups remain separate future work and are not mixed into the device pass.
+
