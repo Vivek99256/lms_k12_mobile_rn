@@ -19,3 +19,12 @@ Spot-verified by the lead against code on 2026-10-07 (all matched):
 | backend_routes_B.md | module route files (student, fees, lms, hrms, result, g2g_lms, pal, task/talent mgmt …) | `routes/api.php` LMS/fees/HRMS JSON beyond cited lines not surveyed |
 | web_core.md | web auth, menu-rights, UI blocks, data-fetch patterns, services | school-ERP endpoints in ~36 `legacyRequest` files not enumerated |
 | web_modules.md | 1045 pages by folder, what each does, endpoints (sampled), hard-on-mobile list, dead/duplicate groups | endpoint lists are sampled, not exhaustive |
+
+## Added in step 2 (2026-10-07)
+| File | Content | Trust |
+|---|---|---|
+| menu_tiles.txt | Distinct active mobile menu tiles per role with number of tenants (output of a read-only SELECT on `mobile_homescreen`, `teacher_mobile_homescreen`; `status='Yes'`) | primary data |
+| menu_tiles_query.php.txt | the exact read-only script (SELECT only) | primary |
+| student_tiles_backend.md | each student tile endpoint → route, auth, params, tables, response (agent-compiled, line-cited) | spot-checked: web.php:476, student.php:224, fees.php:258, lms.php:365, adminapi.php:93 |
+| teacher_tiles_backend.md | each teacher/admin tile → Flutter call → backend route/auth/params/tables + defects | spot-checked: web.php:638 `/lms_data`, `VerifyCsrfToken.php:20-26` |
+| flutter_ref.md | Flutter app screens → endpoints (reference; its docs state endpoints were not run against a live server) | reference only |

@@ -16,6 +16,8 @@ export const colors = {
   danger: '#dc2626',
   dangerSoft: '#fef2f2',
   success: '#16a34a',
+  successSoft: '#ecfdf5',
+  warning: '#d97706', // web design-system warning token
 };
 
 export const gradients = {

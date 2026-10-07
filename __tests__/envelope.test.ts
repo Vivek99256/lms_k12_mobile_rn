@@ -43,4 +43,37 @@ describe('normalizeEnvelope', () => {
   it('does not treat an unwrapped array body as an error', () => {
     expect(normalizeEnvelope([1, 2], 200).data).toEqual([1, 2]);
   });
+
+  it('419 (CSRF host rule) is a server-address problem, not an auth failure', () => {
+    try {
+      normalizeEnvelope({}, 419);
+      throw new Error('should have thrown');
+    } catch (e) {
+      expect((e as ApiError).kind).toBe('server');
+      expect((e as ApiError).status).toBe(419);
+      expect((e as ApiError).message).toMatch(/server address/i);
+    }
+  });
+
+  it('a response-only body is a validation failure with field errors', () => {
+    try {
+      normalizeEnvelope({ response: { title: ['The title field is required.'], date: ['bad date'] } }, 200);
+      throw new Error('should have thrown');
+    } catch (e) {
+      expect((e as ApiError).kind).toBe('validation');
+      expect((e as ApiError).message).toBe('The title field is required.');
+      expect((e as ApiError).fieldErrors).toEqual({ title: ['The title field is required.'], date: ['bad date'] });
+    }
+  });
+
+  it('keeps a body that has a status key or data AND a response as a success (fees, WRT report)', () => {
+    const r = normalizeEnvelope({ status: '1', message: 'ok', response: { paid_amount: 5 } }, 200);
+    expect(r.raw.response).toEqual({ paid_amount: 5 });
+    expect(normalizeEnvelope({ response: 'plain string' }, 200).raw.response).toBe('plain string');
+    expect(normalizeEnvelope({ data: [1], response: { a: ['x'] } }, 200).data).toEqual([1]);
+  });
+
+  it('accepts a bare quoted-URL body (fee receipt) as data', () => {
+    expect(normalizeEnvelope('https://erp.test/receipt.pdf', 200).data).toBe('https://erp.test/receipt.pdf');
+  });
 });

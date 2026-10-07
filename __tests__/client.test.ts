@@ -1,10 +1,14 @@
 import { api, callAuto, configureApi } from '../src/api/client';
 import { ApiError } from '../src/api/errors';
 
-jest.mock('../src/config/env', () => ({ env: { apiBaseUrl: 'https://erp.test', appEnv: 'test' } }));
+jest.mock('../src/config/env', () => ({ env: { apiBaseUrl: 'https://erp.test', appEnv: 'test', erpHosts: [] } }));
 
+// The client reads the body as text (legacy endpoints answer JSON as text/html).
 const respond = (status: number, body: unknown) =>
-  Promise.resolve({ status, json: () => Promise.resolve(body) } as Response);
+  Promise.resolve({
+    status,
+    text: () => Promise.resolve(typeof body === 'string' ? body : JSON.stringify(body)),
+  } as Response);
 
 let onUnauthorized: jest.Mock;
 const fetchMock = jest.fn();

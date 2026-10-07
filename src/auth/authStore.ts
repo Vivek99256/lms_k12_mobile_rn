@@ -71,7 +71,15 @@ useAuthStore.subscribe((s) => {
 configureApi({
   getSession: () => {
     const { token, user } = useAuthStore.getState();
-    return { token, subInstituteId: user?.subInstituteId, syear: user?.syear };
+    return {
+      token,
+      subInstituteId: user?.subInstituteId,
+      syear: user?.syear,
+      userId: user?.id,
+      userProfileId: user?.userProfileId,
+      userProfileName: user?.userProfileName,
+      isStudent: user?.isStudent,
+    };
   },
   onUnauthorized: () => {
     void useAuthStore.getState().signOut();

@@ -1,0 +1,16 @@
+<?php
+// READ-ONLY: SELECT only.
+chdir('D:/next_lms_erp');
+require 'D:/next_lms_erp/vendor/autoload.php';
+$app = require 'D:/next_lms_erp/bootstrap/app.php';
+$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+use Illuminate\Support\Facades\DB;
+foreach (['mobile_homescreen','teacher_mobile_homescreen'] as $t) {
+  echo "\n===== $t\n";
+  foreach (DB::select("select status, count(*) n from $t group by status") as $r) echo "status {$r->status}: {$r->n}\n";
+  foreach (DB::select("select user_profile_name, count(*) n, count(distinct sub_institute_id) tenants from $t group by user_profile_name order by n desc limit 12") as $r) echo "profile '{$r->user_profile_name}': rows {$r->n}, tenants {$r->tenants}\n";
+  foreach (DB::select("select render_type, page_source, open_mode, count(*) n from $t group by render_type,page_source,open_mode") as $r) echo "render={$r->render_type} src={$r->page_source} open={$r->open_mode}: {$r->n}\n";
+  echo "--- distinct tiles (active) by profile: profile | main_title | sub_title | screen_name | api | api_param | render | web_url | #tenants\n";
+  $rows = DB::select("select user_profile_name p, main_title mt, sub_title_of_main st, screen_name sn, sub_title_api api, sub_title_api_param ap, render_type rt, web_url wu, count(distinct sub_institute_id) tn from $t where status = 'Yes' group by p,mt,st,sn,api,ap,rt,wu having tn >= 1 order by p, mt, tn desc");
+  foreach ($rows as $r) echo "{$r->p} | {$r->mt} | {$r->st} | {$r->sn} | {$r->api} | ".substr((string)$r->ap,0,60)." | {$r->rt} | ".substr((string)$r->wu,0,70)." | {$r->tn}\n";
+}

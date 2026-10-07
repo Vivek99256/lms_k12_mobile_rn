@@ -1,0 +1,195 @@
+
+===== mobile_homescreen
+status No: 280
+status Yes: 862
+profile 'Student': rows 1142, tenants 34
+render=native src=external open=in_app: 1142
+--- distinct tiles (active) by profile: profile | main_title | sub_title | screen_name | api | api_param | render | web_url | #tenants
+Student | Activity | Circular & Events | circular_events | https://erp.triz.co.in/circular/fetchData | student_id,sub_institute_id,syear | native |  | 34
+Student | Activity | Student Attendance | student_attendance | https://erp.triz.co.in/studentAttendanceAPI | student_id,syear,sub_institute_id,type | native |  | 31
+Student | Activity | Academic Calendar | academic_calendar | https://erp.triz.co.in/studentCalenderAPI | action,syear,sub_institute_id,type,student_id | native |  | 25
+Student | Activity | Student Discipline | child_remark | https://erp.triz.co.in/studentDisciplineAPI | syear,sub_institute_id,type,student_id | native |  | 23
+Student | Activity | Result PDF | result_pdf | https://erp.triz.co.in/uploadResultAPI | student_id,sub_institute_id,syear | native |  | 22
+Student | Activity | Exam Schedule | exam_schedule | https://erp.triz.co.in/studentExamScheduleAPI | student_id,syear,sub_institute_id,type | native |  | 17
+Student | Activity | Achievement Certificate | achievement_certificate | https://erp.triz.co.in/document_details | student_id,sub_institute_id,type,document_type | native |  | 7
+Student | Activity | Result PDF | result_pdf | https://erp.triz.co.in/studentResultPDFAPI | student_id,sub_institute_id,syear | native |  | 1
+Student | Face Attendance | Capture Photos | capture_photos | https://erp.triz.co.in/add_studentCapturePhotosAPI | syear,sub_institute_id,student_id,stu_image | native |  | 7
+Student | Live Lecture | https://erp.triz.co.in | live_lecture | https://erp.triz.co.in |  | native |  | 7
+Student | LMS | Social Collaborative | social_collabrative | https://erp.triz.co.in/studentSocialCollabrativeAPI | syear,sub_institute_id,student_id | native |  | 10
+Student | LMS | Learn | lms_subject | https://erp.triz.co.in/studentSubjectAPI | syear,sub_institute_id,student_id | native |  | 7
+Student | LMS | Leader Board | leaderboard | https://erp.triz.co.in/studentLeaderBoardAPI | syear,sub_institute_id,student_id | native |  | 3
+Student | LMS | Portfolio | portfolio | https://erp.triz.co.in/studentPortfolioAPI | syear,sub_institute_id,student_id | native |  | 3
+Student | LMS | Virtual Classroom | virtual_classroom | https://erp.triz.co.in/studentVirtualClassroomAPI | syear,sub_institute_id,student_id | native |  | 3
+Student | Main | Homework | home_work | https://erp.triz.co.in/studentHomeworkAssignmentAPI | action,student_id,syear,sub_institute_id | native |  | 34
+Student | Main | Notification Hub | notification_hub | https://erp.triz.co.in/notificationHubAPI | type,student_id,sub_institute_id,mobile_no,imei | native |  | 34
+Student | Main | Fees Details | fees | https://erp.triz.co.in/fees/PaidUnpaid | student_id,sub_institute_id,syear | native |  | 28
+Student | Profile Gallery | Photos Gallery | photos_gallery | https://erp.triz.co.in/studentPhotoVideoGalleryAPI | action,syear,sub_institute_id,type,student_id | native |  | 34
+Student | Profile Gallery | Subject Teachers | subjects | https://erp.triz.co.in/studentTeacherListAPI | student_id,syear,sub_institute_id,type | native |  | 34
+Student | Profile Gallery | Video Gallery | video_gallery | https://erp.triz.co.in/studentPhotoVideoGalleryAPI | action,syear,sub_institute_id,type,student_id | native |  | 26
+Student | Profile Gallery | Health Details | health_details | https://erp.triz.co.in/studentHealthAPI | syear,sub_institute_id,type,student_id | native |  | 12
+Student | School Detail | Principal's Desk | principal_desk | https://erp.triz.co.in/schoolDetailAPI | action,syear,sub_institute_id,type,student_id | native |  | 33
+Student | School Detail | About Us | about_us | https://erp.triz.co.in/schoolDetailAPI | action,syear,sub_institute_id,type,student_id | native |  | 25
+Student | School Detail | Reach us | reach_us | https://erp.triz.co.in/schoolDetailAPI | action,syear,sub_institute_id,type,student_id | native |  | 25
+Student | School Detail | School Timing | school_timing | https://erp.triz.co.in/schoolDetailAPI | action,syear,sub_institute_id,type,student_id | native |  | 25
+Student | School Detail | Academic Activity | acadamic_activity | https://erp.triz.co.in/schoolDetailAPI | action,syear,sub_institute_id,type,student_id | native |  | 24
+Student | School Detail | Achievement | achievement | https://erp.triz.co.in/schoolDetailAPI | action,syear,sub_institute_id,type,student_id | native |  | 24
+Student | School Detail | School Information | school_information | https://erp.triz.co.in/schoolDetailAPI | action,syear,sub_institute_id,type,student_id | native |  | 24
+Student | School Detail | Facility | facility | https://erp.triz.co.in/schoolDetailAPI | action,syear,sub_institute_id,type,student_id | native |  | 23
+Student | School Detail | Rules | rules | https://erp.triz.co.in/schoolDetailAPI | action,syear,sub_institute_id,type,student_id | native |  | 21
+Student | School Detail | Facilities | facility | https://erp.triz.co.in/schoolDetailAPI | action,syear,sub_institute_id,type,student_id | native |  | 1
+Student | School Detail | Rules and Regulations | rules | https://erp.triz.co.in/schoolDetailAPI | action,syear,sub_institute_id,type,student_id | native |  | 1
+Student | Student Detail | Transport | student_transport | https://erp.triz.co.in/studentTransportAPI | syear,sub_institute_id,student_id | native |  | 14
+Student | Student Detail | Height Weight | height_weight | https://erp.triz.co.in/studentHWAPI | syear,sub_institute_id,student_id | native |  | 13
+Student | Student Detail | Infirmary | student_infirmary | https://erp.triz.co.in/studentInfirmaryAPI | syear,sub_institute_id,student_id | native |  | 13
+Student | Student Detail | Consent | student_consent | https://erp.triz.co.in/consentListAPI | syear,sub_institute_id,student_id | native |  | 12
+Student | Student Detail | Vaccination | student_vaccination | https://erp.triz.co.in/studentVaccinationAPI | syear,sub_institute_id,student_id | native |  | 12
+Student | Student Detail | Certificate | student_certificate | https://erp.triz.co.in/studentCertificateAPI | syear,sub_institute_id,student_id,type | native |  | 11
+Student | Student Detail | Hostel | student_hostel | https://erp.triz.co.in/studentHostelAllocationAPI | syear,sub_institute_id,student_id | native |  | 11
+Student | Student Detail | Classwork Gallery | classwork_gallery |  | syear,sub_institute_id,student_id | native |  | 7
+Student | Utility | Holiday List | holiday_list | https://erp.triz.co.in/studentCalenderAPI | action,syear,sub_institute_id,type,student_id | native |  | 31
+Student | Utility | Time Table | time_table | https://erp.triz.co.in/studentTimetableAPI | student_id,syear,sub_institute_id,type | native |  | 31
+Student | Utility | Leave Application | leave_application | https://erp.triz.co.in/studentLeaveApplicationAPI | syear,sub_institute_id,type,student_id,message,apply_date,fr | native |  | 30
+Student | Utility | Parent Communication | parent_communication | https://erp.triz.co.in/add_communicationAPI | sub_institute_id,syear,type,student_id,title,message | native |  | 30
+Student | Utility | WRT Progress Report | wrt_progress | https://erp.triz.co.in/get_wrtreportAPI | syear,sub_institute_id,type,student_id,from_date,to_date | native |  | 10
+Student | Utility | Certificate | student_certificate | https://erp.triz.co.in/studentCertificateAPI | syear,sub_institute_id,student_id,type | native |  | 9
+
+===== teacher_mobile_homescreen
+status No: 542
+status Yes: 1108
+profile 'Teacher': rows 1064, tenants 38
+profile 'Admin': rows 559, tenants 26
+profile 'ICT': rows 14, tenants 1
+profile 'School Admin': rows 13, tenants 1
+render=native src=external open=in_app: 1640
+render=native_dynamic src=external open=in_app: 1
+render=webview src=custom open=in_app: 9
+--- distinct tiles (active) by profile: profile | main_title | sub_title | screen_name | api | api_param | render | web_url | #tenants
+Admin | Add House | Add House | add_house |  |  | webview | https://k12.scholarclone.com/mobile/custom/add-house | 1
+Admin | Add Student Quota | Add Student Quota | add_student_quota |  |  | webview | https://k12.scholarclone.com/mobile/custom/add-student-quota | 1
+Admin | Admission Enquiry | Admission Enquiry | admission_enquiry |  |  | webview | https://k12.scholarclone.com/mobile/custom/admission-inquiry | 1
+Admin | Face Attendance | Capture Attendance | t_capture_attendance | https://erp.triz.co.in/add_studentCaptureAttendanceAPI | syear,sub_institute_id,student_id,stu_image | native |  | 1
+Admin | Face Attendance | Capture Photos | t_capture_photos | https://erp.triz.co.in/add_studentCapturePhotosAPI | syear,sub_institute_id,student_id,stu_image | native |  | 1
+Admin | LMS | Lesson Planning | t_teacher_dairy |  |  | native |  | 5
+Admin | LMS | Teach | t_teach | https://erp.triz.co.in/add_teacherContentAPI | syear,sub_institute_id,type,teacher_id,chapter_id,topic_id,f | native |  | 5
+Admin | LMS | Portfolio Feedback | t_portfolio_feedback |  |  | native |  | 4
+Admin | LMS | Social Collobrative | t_social_collobrative | https://erp.triz.co.in/teacherSocialCollabrativeAPI | syear,sub_institute_id,type,teacher_id | native |  | 4
+Admin | LMS | Teacher Resource | t_teacher_resource |  |  | native |  | 4
+Admin | LMS | Virtual Classroom | t_virtual_classroom | https://erp.triz.co.in/add_teacherVirtualClassroomAPI | syear,sub_institute_id,type,teacher_id,chapter_id,topic_id,r | native |  | 4
+Admin | Main | Admisson Confirmation | t_confirmation |  |  | native |  | 1
+Admin | Main | Admisson Registration | t_registration |  |  | native |  | 1
+Admin | Main | Fees Cancel | t_feescancel |  |  | native |  | 1
+Admin | Main | Fees Collect | t_feescollect |  |  | native_dynamic | fees_collect_summary | 1
+Admin | Main | Inward | t_inward |  |  | native |  | 1
+Admin | Main | Outward | t_outward |  |  | native |  | 1
+Admin | Miscellaneous | Complain | t_complain |  |  | native |  | 21
+Admin | Miscellaneous | Task | t_task |  |  | native |  | 20
+Admin | Miscellaneous | Visitor | t_visitor |  |  | native |  | 18
+Admin | Miscellaneous | Inventory Requisition | t_requisition |  |  | native |  | 12
+Admin | My Attendance | Leave Authorisation | t_leave_authorisation | https://erp.triz.co.in/hrms/myleave | user_id | native |  | 4
+Admin | My Attendance | My Attendance | t_my_attendance | https://erp.triz.co.in/lms_data | user_id,sub_institute_id,status | native |  | 4
+Admin | My Attendance | Punch In/Out | t_punch_inout | https://erp.triz.co.in/hrms-in-time/store | user_id,sub_institute_id,punchin_time,address_in,photo_in | native |  | 4
+Admin | My Attendance | My Attendance | my_attendance |  |  | webview | https://k12.scholarclone.com/mobile/custom/mark-attendance | 1
+Admin | My Attendance | My Leave | t_my_leave | https://erp.triz.co.in/hrms/myleave | user_id | native |  | 1
+Admin | Student | Reply Parent Communic.. | t_parent_comm |  |  | native |  | 23
+Admin | Student | Student Profile | t_student_profile |  |  | native |  | 23
+Admin | Student | Send Notification | t_notification_parent |  |  | native |  | 21
+Admin | Student | Add Circular | t_circular |  |  | native |  | 20
+Admin | Student | Send Email | t_email_parent |  |  | native |  | 13
+Admin | Student | Send SMS | t_sms_parent |  |  | native |  | 13
+Admin | Student | Approve Student Leave | t_approve_leave | https://erp.triz.co.in/teacherLeaveApplicationListAPI | syear,sub_institute_id,type,teacher_id | native |  | 12
+Admin | Student | Assign Homework | t_homework |  |  | native |  | 11
+Admin | Student | Enter Co scholastic | t_coscholastic_mark |  |  | native |  | 4
+Admin | Student | Enter Marks | t_marks |  |  | native |  | 4
+Admin | Student | Take Attendance | t_take_attendance |  |  | native |  | 4
+Admin | Student Discipline | Student Discipline | student_discipline |  |  | webview | https://k12.scholarclone.com/mobile/custom/student-discipline | 1
+Admin | Student Health | Student Health | student_health |  |  | webview | https://k12.scholarclone.com/mobile/custom/student-health | 1
+Admin | Student Height & Weight | Student Height & Weight | student_height_weight |  |  | webview | https://k12.scholarclone.com/mobile/custom/student-height-weight | 1
+Admin | Student Infirmary | Student Infirmary | student_infirmary |  |  | webview | https://k12.scholarclone.com/mobile/custom/student-infirmary | 1
+Admin | Student Vaccination | Student Vaccination | student_vaccination |  |  | webview | https://k12.scholarclone.com/mobile/custom/student-vaccination | 1
+Admin | User | Own Profile | t_own_profile |  |  | native |  | 20
+Admin | User | Proxy Details | t_proxy |  |  | native |  | 19
+Admin | User | Teacher Profile | t_teacher_profile |  |  | native |  | 17
+Admin | User | Message | t_message |  |  | native |  | 4
+Admin | User | Parent Teacher Meeting | t_ptm |  |  | native |  | 2
+Admin | User | Payroll | t_payroll |  |  | native |  | 2
+Admin | Utility | Gallery | t_photo_gallary | https://erp.triz.co.in/photo_video_gallary/TeacherFetchData | syear,sub_institute_id,type,teacher_id | native |  | 23
+Admin | Utility | Calandar | t_calander |  |  | native |  | 7
+Admin | Utility | TimeTable | t_timetable |  |  | native |  | 6
+Admin | Utility | WRT Progress Report | t_wrt_progress | https://erp.triz.co.in/get_wrtreportAPI | syear,sub_institute_id,type,student_id,from_date,to_date | native |  | 5
+Admin | Utility | Exam Schedule | t_exam_schedule |  |  | native |  | 4
+Admin | Utility | Video Gallery | t_video_gallary | https://erp.triz.co.in/photo_video_gallary/TeacherFetchData | syear,sub_institute_id,type,teacher_id | native |  | 2
+ICT | LMS | Lesson Planning | t_teacher_dairy |  |  | native |  | 1
+ICT | LMS | Teach | t_teach | https://erp.triz.co.in/add_teacherContentAPI | syear,sub_institute_id,type,teacher_id,chapter_id,topic_id,f | native |  | 1
+ICT | Miscellaneous | Complain | t_complain |  |  | native |  | 1
+ICT | Miscellaneous | Task | t_task |  |  | native |  | 1
+ICT | Student | Reply Parent Communic.. | t_parent_comm |  |  | native |  | 1
+ICT | Student | Student Profile | t_student_profile |  |  | native |  | 1
+ICT | User | Own Profile | t_own_profile |  |  | native |  | 1
+ICT | User | Parent Teacher Meeting | t_ptm |  |  | native |  | 1
+ICT | User | Payroll | t_payroll |  |  | native |  | 1
+ICT | Utility | Calandar | t_calander |  |  | native |  | 1
+ICT | Utility | gallery | t_photo_gallary | https://erp.triz.co.in/photo_video_gallary/TeacherFetchData | syear,sub_institute_id,type,teacher_id | native |  | 1
+ICT | Utility | TimeTable | t_timetable |  |  | native |  | 1
+ICT | Utility | Video Gallery | t_video_gallary | https://erp.triz.co.in/photo_video_gallary/TeacherFetchData | syear,sub_institute_id,type,teacher_id | native |  | 1
+School Admin | Student | Add Circular | t_circular |  |  | native |  | 1
+School Admin | Student | Approve Student Leave | t_approve_leave | https://erp.triz.co.in/teacherLeaveApplicationListAPI | syear,sub_institute_id,type,teacher_id | native |  | 1
+School Admin | Student | Assign Homework | t_homework |  |  | native |  | 1
+School Admin | Student | Reply Parent Communic.. | t_parent_comm |  |  | native |  | 1
+School Admin | Student | Send Email | t_email_parent |  |  | native |  | 1
+School Admin | Student | Send Notification | t_notification_parent |  |  | native |  | 1
+School Admin | Student | Send SMS | t_sms_parent |  |  | native |  | 1
+School Admin | Student | Student Profile | t_student_profile |  |  | native |  | 1
+School Admin | User | Proxy Details | t_proxy |  |  | native |  | 1
+School Admin | User | Teacher Profile | t_teacher_profile |  |  | native |  | 1
+School Admin | Utility | Gallery | t_photo_gallary | https://erp.triz.co.in/photo_video_gallary/TeacherFetchData | syear,sub_institute_id,type,teacher_id | native |  | 1
+Teacher | Face Attendance | Capture Attendance | t_capture_attendance | https://erp.triz.co.in/add_studentCaptureAttendanceAPI | syear,sub_institute_id,student_id,stu_image | native |  | 8
+Teacher | Face Attendance | Capture Photos | t_capture_photos | https://erp.triz.co.in/add_studentCapturePhotosAPI | syear,sub_institute_id,student_id,stu_image | native |  | 8
+Teacher | LMS | Teach | t_teach | https://erp.triz.co.in/add_teacherContentAPI | syear,sub_institute_id,type,teacher_id,chapter_id,topic_id,f | native |  | 17
+Teacher | LMS | Lesson Planning | t_teacher_dairy |  |  | native |  | 14
+Teacher | LMS | Social Collobrative | t_social_collobrative | https://erp.triz.co.in/teacherSocialCollabrativeAPI | syear,sub_institute_id,type,teacher_id | native |  | 14
+Teacher | LMS | Teacher Resource | t_teacher_resource |  |  | native |  | 14
+Teacher | LMS | Portfolio Feedback | t_portfolio_feedback |  |  | native |  | 7
+Teacher | LMS | Virtual Classroom | t_virtual_classroom | https://erp.triz.co.in/add_teacherVirtualClassroomAPI | syear,sub_institute_id,type,teacher_id,chapter_id,topic_id,r | native |  | 7
+Teacher | Miscellaneous | Complain | t_complain |  |  | native |  | 17
+Teacher | Miscellaneous | Task | t_task |  |  | native |  | 17
+Teacher | Miscellaneous | Inventory Requisition | t_requisition |  |  | native |  | 15
+Teacher | Miscellaneous | Visitor | t_visitor |  |  | native |  | 8
+Teacher | My Attendance | My Attendance | t_my_attendance | https://erp.triz.co.in/lms_data | user_id,sub_institute_id,status | native |  | 11
+Teacher | My Attendance | Punch In/Out | t_punch_inout | https://erp.triz.co.in/hrms-in-time/store | user_id,sub_institute_id,punchin_time,address_in,photo_in | native |  | 11
+Teacher | My Attendance | My Leave | t_my_leave | https://erp.triz.co.in/hrms/myleave | user_id | native |  | 8
+Teacher | Student | Approve Student Leave | t_approve_leave | https://erp.triz.co.in/teacherLeaveApplicationListAPI | syear,sub_institute_id,type,teacher_id | native |  | 33
+Teacher | Student | Assign Homework | t_homework |  |  | native |  | 32
+Teacher | Student | Reply Parent Communic.. | t_parent_comm |  |  | native |  | 32
+Teacher | Student | Student Profile | t_student_profile |  |  | native |  | 32
+Teacher | Student | Take Attendance | t_take_attendance |  |  | native |  | 30
+Teacher | Student | Add Circular | t_circular |  |  | native |  | 29
+Teacher | Student | Send Notification | t_notification_parent |  |  | native |  | 29
+Teacher | Student | Enter Co scholastic | t_coscholastic_mark |  |  | native |  | 16
+Teacher | Student | Enter Marks | t_marks |  |  | native |  | 16
+Teacher | Student | Send Email | t_email_parent |  |  | native |  | 16
+Teacher | Student | Send SMS | t_sms_parent |  |  | native |  | 16
+Teacher | Student | Add Circular | t_circular |  |  | native |  | 3
+Teacher | Student | Assign Homework | t_homework |  |  | native |  | 3
+Teacher | Student | Enter Co scholastic | t_coscholastic_mark |  |  | native |  | 3
+Teacher | Student | Enter Marks | t_marks |  |  | native |  | 3
+Teacher | Student | Reply Parent Communic.. | t_parent_comm |  |  | native |  | 3
+Teacher | Student | Send Email | t_email_parent |  |  | native |  | 3
+Teacher | Student | Send Notification | t_notification_parent |  |  | native |  | 3
+Teacher | Student | Send SMS | t_sms_parent |  |  | native |  | 3
+Teacher | Student | Student Profile | t_student_profile |  |  | native |  | 3
+Teacher | Student | Take Attendance | t_take_attendance |  |  | native |  | 3
+Teacher | User | Own Profile | t_own_profile |  |  | native |  | 31
+Teacher | User | Proxy Details | t_proxy |  |  | native |  | 17
+Teacher | User | Message | t_message |  |  | native |  | 9
+Teacher | User | HRMS | t_hrms | https://erp.triz.co.in/hrms_api.php | syear,sub_institute_id,type,teacher_id,action | native |  | 3
+Teacher | User | Monthly Salary Slip | t_salary_slip | https://erp.triz.co.in/hrms_api.php | syear,sub_institute_id,type,teacher_id,action | native |  | 3
+Teacher | User | Own Profile | t_own_profile |  |  | native |  | 3
+Teacher | User | Payroll | t_payroll |  |  | native |  | 3
+Teacher | Utility | Gallery | t_photo_gallary | https://erp.triz.co.in/photo_video_gallary/TeacherFetchData | syear,sub_institute_id,type,teacher_id | native |  | 34
+Teacher | Utility | Notification Report | t_notification_report | https://erp.triz.co.in/easy_com/notification_report | syear,sub_institute_id,type,mobile,from_date,to_date | native |  | 34
+Teacher | Utility | TimeTable | t_timetable |  |  | native |  | 31
+Teacher | Utility | Calandar | t_calander |  |  | native |  | 17
+Teacher | Utility | Exam Schedule | t_exam_schedule |  |  | native |  | 12
+Teacher | Utility | WRT Progress Report | t_wrt_progress | https://erp.triz.co.in/get_wrtreportAPI | syear,sub_institute_id,type,student_id,from_date,to_date | native |  | 8
+Teacher | Utility | TimeTable | t_timetable |  |  | native |  | 3
+Teacher | Utility | Video Gallery | t_video_gallary | https://erp.triz.co.in/photo_video_gallary/TeacherFetchData | syear,sub_institute_id,type,teacher_id | native |  | 3

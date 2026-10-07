@@ -6,7 +6,8 @@ Goal: bring every module of the web app (`D:/lms_k12`, read-only) into this Reac
 1. [STATUS.md](STATUS.md) — the tracker: current step, what is waiting on approval.
 2. [02-decisions.md](02-decisions.md) — decision log (each: proposal, reason, evidence, approval state).
 3. [01-understanding.md](01-understanding.md) — what the three codebases are.
-4. Later steps add: `03-modules-and-order.md` (step 2), `modules/<id>.md` (step 3, one per sub-module).
+4. [03-modules-and-order.md](03-modules-and-order.md) — modules, classification, dependencies, build order (step 2).
+5. `modules/<id>-<name>.md` — one implementation document per sub-module (step 3): [F1](modules/F1-legacy-transport.md), [S2](modules/S2-student-attendance.md).
 
 ## Folder layout
 ```
@@ -15,6 +16,8 @@ docs/migration/
   STATUS.md               tracker (single source of status)
   01-understanding.md     step 1 findings
   02-decisions.md         decision log D-xx
+  03-modules-and-order.md step 2 plan
+  modules/                one document per sub-module
   evidence/               raw survey notes with file:line citations (see evidence/README.md)
 ```
 

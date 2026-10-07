@@ -1,6 +1,6 @@
-import { env } from '../config/env';
 import { ApiError } from './errors';
 import { Envelope, normalizeEnvelope } from './envelope';
+import { resolveUrl } from './url';
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -8,7 +8,15 @@ export interface SessionContext {
   token: string | null;
   subInstituteId?: number | string | null;
   syear?: string | null;
+  /** Signed-in user (tbluser.id for staff, tblstudent.id for students). Needed for the legacy identity block. */
+  userId?: number | string | null;
+  userProfileId?: number | string | null;
+  userProfileName?: string | null;
+  isStudent?: boolean;
 }
+
+/** Values a screen may add to a legacy request. Arrays/objects must be flattened by the caller. */
+export type LegacyFields = Record<string, string | number | boolean | null | undefined>;
 
 export interface RequestOptions {
   query?: Record<string, string | number | undefined | null>;
@@ -17,6 +25,12 @@ export interface RequestOptions {
   skipAuthHandling?: boolean;
   /** Add the ERP's type=API&sub_institute_id=&syear= convention. Default true. */
   withSession?: boolean;
+  /**
+   * Call an ERP legacy endpoint (bare path such as `studentAttendanceAPI`): sends the identity block
+   * (`legacyFields`) form-encoded, with the bearer header. `query` and `body` entries are merged in as
+   * extra fields, subject to the override rules in `legacyFields`.
+   */
+  legacy?: boolean;
   timeoutMs?: number;
 }
 
@@ -36,13 +50,63 @@ export function configureApi(h: Hooks) {
   hooks = h;
 }
 
+/** The tenant and the caller's role can never be chosen by a screen. */
+const PINNED = new Set(['token', 'sub_institute_id', 'type', 'user_profile_id', 'user_profile_name']);
+/** Ids that name "who is acting / who is being looked at". Fixed to the user's own id for students. */
+const ACTING_IDS = ['user_id', 'teacher_id', 'admin_id', 'student_id'] as const;
+
+/**
+ * The fields the ERP's legacy endpoints read (names as in the Flutter app's LegacyApi and the
+ * controllers). Everything comes from the session; `extra` may add endpoint fields and `syear`, but:
+ *  - token, sub_institute_id, type, user_profile_id, user_profile_name are never overridable;
+ *  - user_id / teacher_id / admin_id / student_id are overridable only for a staff session
+ *    (`isStudent === false`); a student, or an unknown role, always sends their own id.
+ */
+export function legacyFields(session: SessionContext, extra: LegacyFields = {}): Record<string, string> {
+  const fields: Record<string, string> = {};
+  if (session.token) fields.token = session.token;
+  if (session.subInstituteId != null) fields.sub_institute_id = String(session.subInstituteId);
+  if (session.syear) fields.syear = session.syear;
+  if (session.userId != null) for (const k of ACTING_IDS) fields[k] = String(session.userId);
+  if (session.userProfileId != null) fields.user_profile_id = String(session.userProfileId);
+  if (session.userProfileName) fields.user_profile_name = session.userProfileName;
+  fields.type = 'API';
+
+  const staff = session.isStudent === false;
+  for (const [k, v] of Object.entries(extra)) {
+    if (v == null || PINNED.has(k)) continue;
+    if (!staff && (ACTING_IDS as readonly string[]).includes(k)) continue;
+    fields[k] = String(v);
+  }
+  return fields;
+}
+
 function buildUrl(path: string, query: Record<string, string>): string {
-  const abs = /^https?:\/\//i.test(path);
-  if (!abs && !env.apiBaseUrl) throw new ApiError('config', 'The app is missing EXPO_PUBLIC_API_BASE_URL.');
-  const url = abs ? path : `${env.apiBaseUrl}/${path.replace(/^\/+/, '')}`;
+  const url = resolveUrl(path);
   const qs = new URLSearchParams(query).toString();
   if (!qs) return url;
   return url + (url.includes('?') ? '&' : '?') + qs;
+}
+
+/**
+ * Reads the body as text and parses it, whatever the Content-Type: the legacy PHP endpoints answer
+ * JSON with `text/html`. Returns undefined when the body is not JSON.
+ */
+async function readJson(res: Response): Promise<unknown> {
+  let raw: unknown;
+  try {
+    raw = await res.text();
+  } catch {
+    return undefined;
+  }
+  if (typeof raw !== 'string') return undefined;
+  const text = raw.replace(/^﻿/, '').trim();
+  if (!text) return undefined;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return undefined;
+  }
 }
 
 export async function request<T = unknown>(
@@ -51,25 +115,46 @@ export async function request<T = unknown>(
   opts: RequestOptions = {},
 ): Promise<Envelope<T>> {
   const session = hooks.getSession();
-  const common: Record<string, string> = {};
-  if (opts.withSession !== false) {
-    common.type = 'API';
-    if (session.subInstituteId != null) common.sub_institute_id = String(session.subInstituteId);
-    if (session.syear) common.syear = session.syear;
-  }
-  const query: Record<string, string> = { ...common };
-  for (const [k, v] of Object.entries(opts.query ?? {})) if (v != null) query[k] = String(v);
+  const headers: Record<string, string> = { Accept: 'application/json' };
+  const query: Record<string, string> = {};
+  let body: string | undefined;
 
-  const headers: Record<string, string> = { Accept: 'application/json', 'Content-Type': 'application/json' };
-  // Sent as a bearer header AND `token`: the legacy api.session/JwtToken path looks for either.
-  if (session.token) {
-    headers.Authorization = `Bearer ${session.token}`;
-    if (method === 'GET') query.token = session.token;
+  if (opts.legacy) {
+    const extra: LegacyFields = {};
+    for (const [k, v] of Object.entries({ ...(opts.query ?? {}), ...(opts.body ?? {}) })) {
+      if (v == null) continue;
+      if (typeof v === 'object') throw new ApiError('config', `Legacy field "${k}" must be a string, number or boolean.`);
+      extra[k] = v as string | number | boolean;
+    }
+    const fields = legacyFields(session, extra);
+    if (method === 'GET') Object.assign(query, fields);
+    else {
+      headers['Content-Type'] = 'application/x-www-form-urlencoded';
+      body = new URLSearchParams(fields).toString();
+    }
+    // Some legacy controllers read the payload from the header only, others from `token`: send both.
+    if (session.token) headers.Authorization = `Bearer ${session.token}`;
+  } else {
+    const common: Record<string, string> = {};
+    if (opts.withSession !== false) {
+      common.type = 'API';
+      if (session.subInstituteId != null) common.sub_institute_id = String(session.subInstituteId);
+      if (session.syear) common.syear = session.syear;
+    }
+    Object.assign(query, common);
+    for (const [k, v] of Object.entries(opts.query ?? {})) if (v != null) query[k] = String(v);
+
+    headers['Content-Type'] = 'application/json';
+    // Sent as a bearer header AND `token`: the legacy api.session/JwtToken path looks for either.
+    if (session.token) {
+      headers.Authorization = `Bearer ${session.token}`;
+      if (method === 'GET') query.token = session.token;
+    }
+    body =
+      method === 'GET'
+        ? undefined
+        : JSON.stringify({ ...common, ...(session.token ? { token: session.token } : {}), ...opts.body });
   }
-  const body =
-    method === 'GET'
-      ? undefined
-      : JSON.stringify({ ...common, ...(session.token ? { token: session.token } : {}), ...opts.body });
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), opts.timeoutMs ?? TIMEOUT_MS);
@@ -85,11 +170,10 @@ export async function request<T = unknown>(
     clearTimeout(timer);
   }
 
-  let json: unknown;
-  try {
-    json = await res.json();
-  } catch {
-    if (res.status === 401 || res.status === 403) json = {};
+  let json = await readJson(res);
+  if (json === undefined) {
+    // 401/403 may have an empty body; 419 (CSRF host rule) answers with an HTML page.
+    if (res.status === 401 || res.status === 403 || res.status === 419) json = {};
     else throw new ApiError('server', 'The server returned an unexpected response.', res.status);
   }
 
