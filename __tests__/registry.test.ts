@@ -8,6 +8,8 @@ import { HolidayListScreen } from '../src/screens/student/HolidayListScreen';
 import { HomeworkScreen } from '../src/screens/student/HomeworkScreen';
 import { NotificationHubScreen } from '../src/screens/student/NotificationHubScreen';
 import { CertificatesScreen, ConsentScreen, HealthDetailsScreen, HeightWeightScreen, InfirmaryScreen, TransportScreen, VaccinationScreen } from '../src/screens/student/RecordScreens';
+import { PhotoGalleryScreen, VideoGalleryScreen } from '../src/screens/student/GalleryScreen';
+import { SchoolInfoScreen } from '../src/screens/student/SchoolInfoScreen';
 import { RecordUnavailableScreen } from '../src/screens/student/RecordUnavailableScreen';
 import { ResultPdfScreen } from '../src/screens/student/ResultPdfScreen';
 import { LeaveApplicationsScreen } from '../src/screens/student/LeaveApplicationsScreen';
@@ -64,12 +66,26 @@ describe('screenRegistry', () => {
     expect(screenRegistry.achievement_certificate).toBe(RecordUnavailableScreen);
   });
 
+  it('maps the S10 tiles: nine school-information pages, two galleries, and the classwork tile to the unavailable message', () => {
+    for (const n of ['about_us', 'principal_desk', 'school_information', 'achievement', 'school_timing', 'rules', 'facility', 'acadamic_activity', 'reach_us']) {
+      expect(screenRegistry[n]).toBe(SchoolInfoScreen);
+    }
+    expect(screenRegistry.photos_gallery).toBe(PhotoGalleryScreen);
+    expect(screenRegistry.video_gallery).toBe(VideoGalleryScreen);
+    expect(screenRegistry.classwork_gallery).toBe(RecordUnavailableScreen);
+  });
+
   it('has exactly the registered student screens and claims no staff names (they keep their existing fallback)', () => {
     expect(Object.keys(screenRegistry).sort()).toEqual([
+      'about_us',
+      'acadamic_activity',
       'academic_calendar',
+      'achievement',
       'achievement_certificate',
       'circular_events',
+      'classwork_gallery',
       'exam_schedule',
+      'facility',
       'fees',
       'health_details',
       'height_weight',
@@ -78,7 +94,13 @@ describe('screenRegistry', () => {
       'leave_application',
       'notification_hub',
       'parent_communication',
+      'photos_gallery',
+      'principal_desk',
+      'reach_us',
       'result_pdf',
+      'rules',
+      'school_information',
+      'school_timing',
       'student_attendance',
       'student_certificate',
       'student_consent',
@@ -88,6 +110,7 @@ describe('screenRegistry', () => {
       'student_vaccination',
       'subjects',
       'time_table',
+      'video_gallery',
     ]);
     expect(screenRegistry.t_take_attendance).toBeUndefined();
     expect(screenRegistry.t_circular).toBeUndefined();

@@ -702,3 +702,80 @@ export const fetchCertificates = () =>
     html: text(r.certificate_html),
     createdAt: text(r.created_at),
   }));
+
+// ---------------------------------------------------------------------------------------------
+// S10 - school information and photo / video galleries (VIEW ONLY). Legacy READ endpoints only, each JWT-checked.
+// Never called: front_desk/send_attachment/create (the classwork gallery - it embeds whole tbluser/tblstudent rows,
+// including staff passwords, in every row), any staff gallery / school_detail / front-desk route, any write
+// (docs/migration/modules/S10-school-info-galleries.md §3 and backend-asks/S10-classwork-credential-exposure.md).
+// ---------------------------------------------------------------------------------------------
+
+/**
+ * One row of `schoolDetailAPI`. The backend swaps its column aliases (`type as title, title as description`,
+ * schooldetailController.php:220), so `type` here is the server's `title` field and `content` its `description`.
+ */
+export interface SchoolDetailRow {
+  /** The page type the school stored (e.g. "About Us"). */
+  type: string;
+  /** The page content, HTML written by the school. Only ever flattened to text by the model. */
+  content: string;
+}
+
+/**
+ * `POST schoolDetailAPI` (routes/student.php:184; schooldetailController.php:200-233), form-encoded by F1 with `type=API`
+ * and the one field the endpoint needs: `action`, which must equal the stored page type. No student id is involved.
+ */
+export async function fetchSchoolDetail(action: string): Promise<SchoolDetailRow[]> {
+  const res = await legacy.post<unknown>('schoolDetailAPI', { action });
+  return list(res.data, (r) => ({ type: text(r.title), content: text(r.description) }));
+}
+
+/** One photo or video of an album. `file` is a URL for photos and the raw stored link for videos. */
+export interface GalleryItem {
+  album: string;
+  title: string;
+  file: string;
+  date: string;
+  type: string;
+}
+
+/** The server's wording when the student's class has nothing of that kind. */
+export const NO_GALLERY_MESSAGE = 'No Data Found';
+
+const galleryItem = (album: string, r: Record<string, unknown>): GalleryItem => ({
+  album: text(r.album_title).trim() || album,
+  title: text(r.title),
+  file: text(r.file_name),
+  date: text(r.date_),
+  type: text(r.type),
+});
+
+/**
+ * `data` is a PHP array keyed by album title: a JSON **object** normally, a JSON **array** (of item lists) when the titles
+ * happen to be 0, 1, 2 ... Both are flattened to one list; the album comes from each item's `album_title`.
+ */
+export function flattenGallery(data: unknown): GalleryItem[] {
+  const out: GalleryItem[] = [];
+  const take = (key: string, v: unknown) => {
+    if (Array.isArray(v)) v.filter(isRecord).forEach((r) => out.push(galleryItem(key, r)));
+    else if (isRecord(v)) out.push(galleryItem(key, v));
+  };
+  if (Array.isArray(data)) data.forEach((v) => take('', v));
+  else if (isRecord(data)) Object.entries(data).forEach(([k, v]) => take(k, v));
+  return out;
+}
+
+/**
+ * `POST studentPhotoVideoGalleryAPI` (routes/student.php:185; photo_video_gallaryController.php:600-648), form-encoded by F1
+ * with `type=API` and `action` = Photo | Video. The server scopes the albums to the student's class and division.
+ * "No Data Found" is an empty list; any other validation message is an error.
+ */
+export async function fetchGallery(kind: 'Photo' | 'Video'): Promise<GalleryItem[]> {
+  try {
+    const res = await legacy.post<unknown>('studentPhotoVideoGalleryAPI', { action: kind });
+    return flattenGallery(res.raw.data);
+  } catch (e) {
+    if (e instanceof ApiError && e.kind === 'validation' && e.message.trim() === NO_GALLERY_MESSAGE) return [];
+    throw e;
+  }
+}

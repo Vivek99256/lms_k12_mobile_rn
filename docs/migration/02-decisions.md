@@ -270,3 +270,26 @@ A workaround is allowed only if it is safe, stable, maintainable, and does **not
 - **Q16:** stays OPEN; synthetic / non-existent ids only. **Device pass:** deferred; do not start it.
 - **Next module:** the next planned module (S10 — school info and galleries) only after presenting its scope/design and stopping for approval.
 
+## S10 proposals (2026-10-07, awaiting your answers)
+- **Q36 / S10-D1** scope. A (recommended): school information (nine pages), photo gallery, video gallery, plus the "not available" state for the classwork tile. B: school information and video gallery only (no in-app images). C: do not build S10 now.
+- **Q37** S10-D2 legacy read endpoints only with fixed action texts, tiles' stored `api` ignored; D3 school pages as plain text from the HTML with `http(s)` URLs tappable; D4 photo thumbnails (a) in the app via the built-in `Image` from validated ERP URLs (platform image cache applies) or (b) no in-app images, photos open externally; D5 videos are links only, no third-party thumbnails; D6 classwork tile shows "This isn't available in the app yet." and makes no request (endpoint exposes staff passwords); D7 no share/save/download/upload, albums ordered by newest item.
+- **Q38** write up the classwork credential exposure as a separate backend ask (independent of the app); no Laravel change.
+- **Q16** stays OPEN.
+
+## Answers received (2026-10-07, S10 approval)
+- **Q36** option A — build School Information, Photo Gallery, Video Gallery and the Classwork Gallery unavailable state, all view-only.
+- **Q37** yes — S10-D2…D7 with **D4(b)**: the strict no-caching approach. No React Native `Image` for photos; no intentional caching or persistence of gallery images; show photo titles/items in the app and open the actual photo externally after URL validation; videos are links only; no third-party video thumbnails; no download, save, share or in-app media caching. School information: `schoolDetailAPI`, the backend's actual field behaviour preserved (`title` = page type, `description` = HTML content), HTML shown safely as plain text, only http/https links tappable after URL validation, no invented content for empty data. Galleries: both album response shapes handled, deterministic album ordering. Classwork Gallery: must remain unavailable with "This isn't available in the app yet." / "Please ask your school."; `front_desk/send_attachment/create` is never called and its response is never sanitised or partially consumed as a workaround.
+- **Q38** yes — the classwork credential-exposure issue is written up as a separate backend security ask ([backend-asks/S10-classwork-credential-exposure.md](backend-asks/S10-classwork-credential-exposure.md)); no Laravel/backend change.
+- **Q16** remains OPEN. **Commit:** S10 stays uncommitted until you have reviewed it and separately approve the commit. **Device pass:** deferred; no new packages.
+
+## S10 implementation notes (2026-10-07)
+- Built as approved; deviations are listed in the S10 document §17 (text list instead of a thumbnail grid per D4(b), 30 items per page, fully specified album order, an unknown school-page tile shows the unavailable message, a second local token for a non-existent tenant).
+- **Open:** review and sign-off of S10; commit approval; the coordinated device pass (explicit approval needed); next sub-module.
+
+## Answers received (2026-10-07, S10 sign-off → S8)
+- **S10:** signed off as done; commit approved (School Information, Photo Gallery, Video Gallery, the Classwork unavailable state, models, hooks, screens, registry/API changes, S10 tests, S10 documentation, the classwork credential-exposure backend security ask, and the tracker/decision/README updates; no Laravel, write/upload functionality, device/native changes, secrets or generated files). **S10b stays blocked on the backend.**
+- The D4(b) strict no-caching approach is approved: no React Native `Image`, no image library, no intentional photo download/cache/storage, external browser/viewer only after URL validation, no share/download/save controls.
+- The classwork endpoint (`front_desk/send_attachment/create`) must remain completely blocked: never called, no fallback; the backend security ask stays; Laravel is not modified.
+- **Q16:** stays OPEN; synthetic / non-existent ids only. **Device pass:** deferred; do not start it.
+- **Next module:** the next planned module (S8 — learning / LMS) only after presenting its scope/design and stopping for approval.
+

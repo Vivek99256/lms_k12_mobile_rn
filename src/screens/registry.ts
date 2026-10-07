@@ -12,7 +12,9 @@ import { LeaveApplicationsScreen } from './student/LeaveApplicationsScreen';
 import { ParentCommunicationScreen } from './student/ParentCommunicationScreen';
 import { CertificatesScreen, ConsentScreen, HealthDetailsScreen, HeightWeightScreen, InfirmaryScreen, TransportScreen, VaccinationScreen } from './student/RecordScreens';
 import { RecordUnavailableScreen } from './student/RecordUnavailableScreen';
+import { PhotoGalleryScreen, VideoGalleryScreen } from './student/GalleryScreen';
 import { ResultPdfScreen } from './student/ResultPdfScreen';
+import { SchoolInfoScreen } from './student/SchoolInfoScreen';
 import { SubjectTeachersScreen } from './student/SubjectTeachersScreen';
 import { TimetableScreen } from './student/TimetableScreen';
 
@@ -57,6 +59,21 @@ export const screenRegistry: Record<string, TileScreenComponent> = {
   // an honest message, no request.
   student_hostel: RecordUnavailableScreen,
   achievement_certificate: RecordUnavailableScreen,
+  // S10 - school information (schoolDetailAPI, fixed action text per page) and photo / video galleries, view only.
+  about_us: SchoolInfoScreen,
+  principal_desk: SchoolInfoScreen,
+  school_information: SchoolInfoScreen,
+  achievement: SchoolInfoScreen,
+  school_timing: SchoolInfoScreen,
+  rules: SchoolInfoScreen,
+  facility: SchoolInfoScreen,
+  acadamic_activity: SchoolInfoScreen,
+  reach_us: SchoolInfoScreen,
+  photos_gallery: PhotoGalleryScreen,
+  video_gallery: VideoGalleryScreen,
+  // The classwork gallery's only endpoint (front_desk/send_attachment/create) embeds staff passwords in every row:
+  // it is never called; an honest message instead.
+  classwork_gallery: RecordUnavailableScreen,
 };
 
 export function registerScreens(entries: Record<string, TileScreenComponent>) {
