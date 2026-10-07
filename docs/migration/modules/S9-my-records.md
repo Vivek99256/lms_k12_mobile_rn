@@ -261,3 +261,22 @@ No `package.json`, native, Laravel or Next.js change; **no new package**. `stude
 ### Rollback
 1. Delete the nine lines in `src/screens/registry.ts` (the tiles fall back to `GenericDataScreen`, today's behaviour), or `git revert` the S9 commit once it exists. 2. The additions to `student.ts` are additive and unused afterwards; F1 and S1–S7 are unaffected. 3. JS-only; no server or data change was made, and nothing is stored on the device.
 
+
+
+## 18. S9c — Student Discipline (added 2026-10-07; approved for the plan, **NOT implemented**)
+Added to the plan on your Q41 answer after the S8 audit found the student tile **Student Discipline** (`child_remark`, **23** of 34 student tenants, ev:menu_tiles.txt line 11) had no module. **No S9c code exists yet; implementation needs your separate approval after S8.** Facts below are from code and from one local probe with a non-existent student.
+| | |
+|---|---|
+| Endpoint | `POST studentDisciplineAPI` — `routes/student.php:183`; `diciplineController::studentDisciplineAPI` `app/Http/Controllers/front_desk/dicipline/diciplineController.php:276-` |
+| Auth / identity | the JWT is checked on every call (**[VERIFIED-LOCAL]** 401 without a token); `student_id`, `sub_institute_id`, `syear` from the request; no ownership check (same as every S9 endpoint) |
+| Query | parameterised query builder on table `dicipline`: `dicipline as discipline, message, date_ as discipline_date, flag` where `syear`, `sub_institute_id`, `student_id` match (`:296-301`) |
+| Response | `{"status":1,"message":"Success","data":[{discipline, message, discipline_date, flag}]}`; `Parameter Missing` when an id is missing. **[VERIFIED-LOCAL]** `{"status":1,"message":"Success","data":[]}` for the synthetic student |
+| Flutter | `lists_a.dart:281`: shows `discipline`, `message`, `discipline_date` (ev:flutter_ref.md line 90) |
+| Meaning of `flag` | not established from code (**[ASSUMPTION]**: a category/severity set by staff); it would be shown as sent, never interpreted |
+**Approved requirements for S9c (Q41), to be built later with the same shape as S9:**
+- view only; **no** write, edit or delete (the staff discipline entry screens and `student-care/discipline` are never called);
+- the S9 sensitive-data standard: data in memory only while the screen is open (`gcTime: 0`, dropped on unmount), **no console logging, no persistent storage, no sharing or exporting**;
+- authenticated requests only (Bearer token, `type=API`, F1 legacy transport; the session student id);
+- newest first by `discipline_date`; plain text; nothing invented; unreadable dates shown as sent;
+- verification with synthetic / non-existent ids only (Q16): the local test would assert counts only and never inspect a body.
+Open points for the S9c document: how to show `flag` (as sent, unlabelled), and whether the screen needs an extra privacy note. Tracker row: S9c "proposed — awaiting implementation approval".

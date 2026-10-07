@@ -293,3 +293,34 @@ A workaround is allowed only if it is safe, stable, maintainable, and does **not
 - **Q16:** stays OPEN; synthetic / non-existent ids only. **Device pass:** deferred; do not start it.
 - **Next module:** the next planned module (S8 — learning / LMS) only after presenting its scope/design and stopping for approval.
 
+## S8 proposals (2026-10-07, awaiting your answers)
+- **Q39 / S8-D1** scope. A (recommended): S8a (my discussions + conversations), S8b (Learn, at risk) and the Live Lecture message. B: S8a and the Live Lecture message only; Learn shows "This isn't available in the app yet." until the backend binds `studentContentAPI`. C: do not build S8 now. Virtual classroom, portfolio and leader board stay out of every option.
+- **Q40** S8-D2 social uses the modern token-bound API only (`mine=1`), never the legacy one; D3 Learn uses `studentSubjectAPI` and `studentContentAPI` only, tile `api` ignored; D4 only the student's own discussions are shown, the tenant feed is never requested; D5 (option A) `studentContentAPI` with digit-validated ids, one chapter's items shown when opened, any `status:0` other than `No Data Found` is an error; D6 links open only externally (ERP files via `safeAttachmentUrl`, other plain https via `isSafeHttpUrl`), no download/cache/share, no image fetched; D7 no write of any kind.
+- **Q41** add the Student Discipline tile (`child_remark`, 23 tenants) as S9c, view only, with the S9 health-data handling.
+- **Q42** write up the `studentContentAPI` problems and the other S8 §10 items as a separate backend ask; no Laravel change.
+- **Q16** stays OPEN. **Disclosure (S8 document §0):** a research probe of the modern social-collaborative list without `mine=1` returned one real public discussion post from tenant 1; only the first 320 characters were displayed and the response file was deleted unread; no further request to that feed will be made without `mine=1`.
+
+## Answers received (2026-10-07, S8 approval)
+- **Q39** option B — build S8a (Social Collaborative, view-only, the student's own discussions only) and S8c (Live Lecture, unavailable state only). **S8b Learn is not built**: its tile shows "This isn't available in the app yet." / "Please ask your school."
+- **Q40** yes — S8-D2…D7 with these clarifications. S8a: only the modern token-bound API with `mine=1`; never request the broad/public feed; never show another student's or a public discussion; view only (no posting, commenting, editing, deleting); no author information beyond what is explicitly required and safely returned for the student's own records; external links validated; no images fetched automatically. S8b: do not call the content endpoint, no legacy fallback, no client-side workaround for the SQL/query-construction issue, keep the unavailable state until the backend endpoint is reviewed and fixed, document the exact backend risks. S8c: no endpoint, the approved unavailable state, no request.
+- **Q41** approved — Student Discipline is added as **S9c**: view-only, S9 sensitive-data standard (in memory only, no console logging, no persistent storage, no sharing/export), no write/edit/delete, authenticated token-bound requests, synthetic ids only. Added to the tracker and the S9 document (§18); **not implemented** unless separately approved after S8.
+- **Q42** yes — [backend-asks/S8-learn-content-endpoint.md](backend-asks/S8-learn-content-endpoint.md): SQL built from request values, no pagination, repeated queries per chapter/topic, CDN/external links, the required server-side validation/parameterisation and authorization review. No Laravel change.
+
+## Q16 process correction (2026-10-07) — applies from now on
+The S8 research probe that returned one real public discussion (S8 document §0) means Q16 stays open and is treated more strictly:
+- Do **not** intentionally retrieve any real database row, even if it is publicly visible. Synthetic / non-existent ids only.
+- If a supposedly synthetic probe unexpectedly returns a real row: **stop immediately, do not inspect or quote its contents, do not save it, and report it.**
+- Do not use broad / list endpoints that can return real tenant data merely to inspect a response shape.
+- Do not read real student, parent, teacher, discussion, health or school content. All production / live-data assumptions stay closed until Q16 is explicitly resolved.
+How it was applied in S8: the local test requests the discussion list only with `mine=1` (scoped to the non-existent caller), asserts counts only, never prints or inspects a body, and the detail only for a non-existent id.
+
+## S8 implementation notes (2026-10-07)
+- Built as approved; deviations are listed in the S8 document §17. The one that touches shared code: an opt-in `bearerOnly` request option in the F1 client, so the two S8a GET calls do not repeat the JWT in the URL (default behaviour unchanged, tests pin both).
+- **Open:** review and sign-off of S8 (including the `bearerOnly` change); commit approval; whether to implement S9c next; the coordinated device pass (explicit approval needed).
+
+## Answers received (2026-10-07, S8 sign-off → S9c)
+- **S8a + S8c:** signed off as done; commit approved (S8a view-only functionality, the Live Lecture and Learn unavailable states, discussion models/hooks/screens/API changes, S8 tests and documentation, the Learn backend security ask, the Q16 process-correction documentation, the S9c tracker/documentation updates, and the F1 `bearerOnly` change with its tests; no Learn implementation, no Learn content endpoint calls, no posting/commenting/edit/delete, no Laravel, device/native, secrets or generated files).
+- **`bearerOnly` (F1) explicitly approved:** default behaviour for existing modules is unchanged; S8a GET requests use the Authorization Bearer header only and never put the JWT in a query parameter; the tests cover both the default and `bearerOnly`.
+- **Q16:** stays open with the strict rule: synthetic / non-existent ids only; never inspect real response bodies; never use broad endpoints to discover response shapes; if any synthetic request unexpectedly returns real data, stop immediately and report it.
+- **S9c — Student Discipline — approved as the next implementation (view only):** token-bound requests only; synthetic ids only for verification; data in memory only; no console logging; no persistent storage/cache/share/export; no write/edit/delete; no unnecessary ids or sensitive fields exposed; follow the backend's actual status/text values without inventing business states; external links validated through F1; no device/native work. Build and verify, **do not commit** until sign-off.
+

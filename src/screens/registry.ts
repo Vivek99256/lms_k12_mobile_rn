@@ -15,6 +15,7 @@ import { RecordUnavailableScreen } from './student/RecordUnavailableScreen';
 import { PhotoGalleryScreen, VideoGalleryScreen } from './student/GalleryScreen';
 import { ResultPdfScreen } from './student/ResultPdfScreen';
 import { SchoolInfoScreen } from './student/SchoolInfoScreen';
+import { SocialCollaborativeScreen } from './student/SocialCollaborativeScreen';
 import { SubjectTeachersScreen } from './student/SubjectTeachersScreen';
 import { TimetableScreen } from './student/TimetableScreen';
 
@@ -74,6 +75,11 @@ export const screenRegistry: Record<string, TileScreenComponent> = {
   // The classwork gallery's only endpoint (front_desk/send_attachment/create) embeds staff passwords in every row:
   // it is never called; an honest message instead.
   classwork_gallery: RecordUnavailableScreen,
+  // S8 - Social Collaborative: the student's OWN discussions only (modern token-bound API, always mine=1), view only.
+  social_collabrative: SocialCollaborativeScreen,
+  // Learn: the content endpoint (studentContentAPI) is never called; Live Lecture has no endpoint. Honest message, no request.
+  lms_subject: RecordUnavailableScreen,
+  live_lecture: RecordUnavailableScreen,
 };
 
 export function registerScreens(entries: Record<string, TileScreenComponent>) {

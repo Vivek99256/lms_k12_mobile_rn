@@ -10,6 +10,7 @@ import { NotificationHubScreen } from '../src/screens/student/NotificationHubScr
 import { CertificatesScreen, ConsentScreen, HealthDetailsScreen, HeightWeightScreen, InfirmaryScreen, TransportScreen, VaccinationScreen } from '../src/screens/student/RecordScreens';
 import { PhotoGalleryScreen, VideoGalleryScreen } from '../src/screens/student/GalleryScreen';
 import { SchoolInfoScreen } from '../src/screens/student/SchoolInfoScreen';
+import { SocialCollaborativeScreen } from '../src/screens/student/SocialCollaborativeScreen';
 import { RecordUnavailableScreen } from '../src/screens/student/RecordUnavailableScreen';
 import { ResultPdfScreen } from '../src/screens/student/ResultPdfScreen';
 import { LeaveApplicationsScreen } from '../src/screens/student/LeaveApplicationsScreen';
@@ -75,6 +76,12 @@ describe('screenRegistry', () => {
     expect(screenRegistry.classwork_gallery).toBe(RecordUnavailableScreen);
   });
 
+  it('maps the S8 tiles: Social Collaborative to its screen; Learn and Live Lecture to the unavailable message', () => {
+    expect(screenRegistry.social_collabrative).toBe(SocialCollaborativeScreen);
+    expect(screenRegistry.lms_subject).toBe(RecordUnavailableScreen);
+    expect(screenRegistry.live_lecture).toBe(RecordUnavailableScreen);
+  });
+
   it('has exactly the registered student screens and claims no staff names (they keep their existing fallback)', () => {
     expect(Object.keys(screenRegistry).sort()).toEqual([
       'about_us',
@@ -92,6 +99,8 @@ describe('screenRegistry', () => {
       'holiday_list',
       'home_work',
       'leave_application',
+      'live_lecture',
+      'lms_subject',
       'notification_hub',
       'parent_communication',
       'photos_gallery',
@@ -101,6 +110,7 @@ describe('screenRegistry', () => {
       'rules',
       'school_information',
       'school_timing',
+      'social_collabrative',
       'student_attendance',
       'student_certificate',
       'student_consent',

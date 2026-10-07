@@ -25,6 +25,8 @@ export interface RequestOptions {
   skipAuthHandling?: boolean;
   /** Add the ERP's type=API&sub_institute_id=&syear= convention. Default true. */
   withSession?: boolean;
+  /** GET only: send the token in the Authorization header alone, not repeated as `?token=` in the URL (api.session endpoints read the header). Default false. */
+  bearerOnly?: boolean;
   /**
    * Call an ERP legacy endpoint (bare path such as `studentAttendanceAPI`): sends the identity block
    * (`legacyFields`) form-encoded, with the bearer header. `query` and `body` entries are merged in as
@@ -148,7 +150,7 @@ export async function request<T = unknown>(
     // Sent as a bearer header AND `token`: the legacy api.session/JwtToken path looks for either.
     if (session.token) {
       headers.Authorization = `Bearer ${session.token}`;
-      if (method === 'GET') query.token = session.token;
+      if (method === 'GET' && !opts.bearerOnly) query.token = session.token;
     }
     body =
       method === 'GET'

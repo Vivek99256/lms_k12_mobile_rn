@@ -779,3 +779,91 @@ export async function fetchGallery(kind: 'Photo' | 'Video'): Promise<GalleryItem
     throw e;
   }
 }
+
+// ---------------------------------------------------------------------------------------------
+// S8a - Social Collaborative, "my discussions" (VIEW ONLY). Modern token-bound API, and ONLY with `mine=1`: the app never
+// requests the broad / public feed, so it can only ever receive the signed-in student's own discussions. No post, no
+// comment, no edit, no delete. The Learn content endpoint (studentContentAPI) and every legacy LMS endpoint are never
+// called (docs/migration/modules/S8-learning.md §3 and backend-asks/S8-learn-content-endpoint.md).
+// ---------------------------------------------------------------------------------------------
+
+/** One discussion the student started. `authorId` is kept only so the model can refuse anything that is not the student's own. */
+export interface Discussion {
+  id: string;
+  title: string;
+  description: string;
+  /** `public` | `private` as the server sends it. */
+  visibility: string;
+  /** Empty, or an absolute URL (usually the content CDN); the model checks it before use. */
+  attachment: string;
+  createdAt: string;
+  commentCount: number;
+  authorId: string;
+}
+
+export interface DiscussionComment {
+  id: string;
+  message: string;
+  createdAt: string;
+  authorId: string;
+  /** The display name only; the server's class and avatar fields are not read. */
+  authorName: string;
+}
+
+export interface DiscussionDetail extends Discussion {
+  comments: DiscussionComment[];
+}
+
+const DISCUSSIONS_PAGE_SIZE = 50;
+/** At most 10 pages (500 discussions) are followed. */
+const DISCUSSIONS_MAX_PAGES = 10;
+
+/** Digits only (the id comes from the student's own list; anything else is refused before any request). */
+export const isDiscussionId = (id: string): boolean => /^\d{1,12}$/.test(id);
+
+const authorOf = (v: unknown): { id: string; name: string } => {
+  const a = isRecord(v) ? v : {};
+  return { id: text(a.user_id), name: text(a.name) };
+};
+
+const pickDiscussion = (r: Record<string, unknown>): Discussion => ({
+  id: text(r.id),
+  title: text(r.title),
+  description: text(r.description),
+  visibility: text(r.visibility),
+  attachment: text(r.attachment_url),
+  createdAt: text(r.created_at),
+  commentCount: count(r.comment_count),
+  authorId: authorOf(r.author).id,
+});
+
+/**
+ * `GET api/lms/social-collaborative?mine=1&per_page=50&page=N` (routes/api.php:414; LmsSocialCollaborativeApiController.php:37-59).
+ * `mine=1` is a constant here - this function takes no parameters, so the broad feed cannot be requested through it.
+ * The Authorization header carries the token (`bearerOnly`: it is not repeated in the URL). Follows `meta.last_page`, capped.
+ */
+export async function fetchMyDiscussions(): Promise<Discussion[]> {
+  const out: Discussion[] = [];
+  for (let page = 1; page <= DISCUSSIONS_MAX_PAGES; page++) {
+    const res = await api.get<unknown>('api/lms/social-collaborative', { query: { mine: 1, per_page: DISCUSSIONS_PAGE_SIZE, page }, bearerOnly: true });
+    out.push(...list(res.data, pickDiscussion));
+    const meta = isRecord(res.raw.meta) ? res.raw.meta : {};
+    const last = Number(meta.last_page);
+    if (!Number.isFinite(last) || page >= last) break;
+  }
+  return out;
+}
+
+/** `GET api/lms/social-collaborative/{id}` (api.php:418; show `:61-72`). The id is validated; the model refuses a discussion that is not the student's own. */
+export async function fetchDiscussion(id: string): Promise<DiscussionDetail> {
+  if (!isDiscussionId(id)) throw new ApiError('validation', 'This discussion cannot be opened.');
+  const res = await api.get<unknown>(`api/lms/social-collaborative/${id}`, { bearerOnly: true });
+  const d = isRecord(res.data) ? res.data : {};
+  return {
+    ...pickDiscussion(d),
+    comments: list(d.comments, (c) => {
+      const a = authorOf(c.author);
+      return { id: text(c.id), message: text(c.message), createdAt: text(c.created_at), authorId: a.id, authorName: a.name };
+    }),
+  };
+}
