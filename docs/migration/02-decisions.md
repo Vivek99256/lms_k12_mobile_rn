@@ -108,3 +108,32 @@ A workaround is allowed only if it is safe, stable, maintainable, and does **not
 - **Q16:** do **not** access real student data. The remote `.env` database is treated as potentially production/live until you explicitly confirm it is a non-production/shared development environment or give specific approved read-only checks. Allowed meanwhile: student id 0, synthetic/test data, local Laravel verification, read-only endpoint checks that cannot expose real student data.
 - **Commit:** F1 + S2 may be committed on a dedicated migration branch (done: `migration/f1-s2`).
 - **Next module:** S1 documentation (not built).
+
+## S1 proposals (2026-10-07) — PROPOSED, see [S1 document](modules/S1-student-home.md) §6, §12
+- **S1-D1** For students the Home dashboard section is replaced by a purpose-built one; staff keep the generic section.
+- **S1-D2** `notificationHubAPI` needs a non-empty `mobile_no` that the server never uses; send the constant `'0'` (no phone number).
+- **S1-D3** Ignore the server-built `image` / `side_image` URLs (no remote images).
+- **S1-D4** Move the private `monthDays` helper out of `AttendanceScreen.tsx` into `calendarDays.ts` (behaviour-neutral change to a done module, covered by S2's tests).
+- **S1-D5** Notification list: client-side "Show more" (30 at a time), because the server returns everything.
+- **S1-D6** Make only `http(s)://` links in notification text tappable.
+- **Open:** Q17 read-only SELECT on lookup table `circular_type`; Q18 approve S1-D1…D6; Q19 approve the S1 document. Q16 (database environment) remains open.
+
+## Answers received (2026-10-07, S1 approval)
+- **Q17** yes — one read-only SELECT on `circular_type` (done: `1 Circular`, `2 Event`).
+- **Q18** yes — S1-D1…D6 approved and implemented.
+- **Q19** yes — S1 document approved; built in the order calendar → notifications → circulars → dashboard.
+- **Q16** remains OPEN: real student data stays off-limits; only non-existent ids and the local server are used.
+- **Commit:** none until you approve (S1 is uncommitted).
+
+## Findings during S1 (2026-10-07)
+- **Circular type names are `Circular` and `Event`** (not Flutter's lowercase literals); the app sends the exact names.
+- **JSON bodies break `circular/fetchData`** (reads `$_REQUEST`, `circularController.php:123`) — F1's form-encoding is required; confirmed on the local server.
+- **Pre-existing dependency issue (not caused by S1):** `expo-asset` sits only under `node_modules/expo/node_modules`, so `expo-font` (used by `@expo/vector-icons`, already imported by `RootNavigator` and `TileList`) cannot resolve it from the top level. Jest cannot load those icons; whether the app bundles on a device is **unverified**.
+- **Open Q20:** may I check it (e.g. try a dev build or a Metro bundle) and, if it fails, run `npx expo install expo-asset`? That adds a direct dependency, so it needs your approval; I have not changed `package.json`.
+
+## Answers received (2026-10-07, S1 sign-off → S3)
+- **S1:** signed off as done; commit approved (S1-related changes and docs only).
+- **Q16:** stays OPEN. The remote database is treated as potentially production; no real student data is read until you explicitly confirm the environment.
+- **Q20:** yes — check the app in a development build; install `expo-asset` (Expo-compatible command, direct dependency) **only if** the build shows it is genuinely needed; do not install it preemptively; do not upgrade other Expo/React Native packages; document the result; rerun typecheck and the full suite after any dependency change.
+- **Next module:** S3 — Timetable and Exam Schedule. Document first; do not build.
+

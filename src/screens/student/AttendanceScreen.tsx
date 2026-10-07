@@ -11,8 +11,6 @@ import {
   addMonths,
   clampMonth,
   compareMonths,
-  dayLabel,
-  DayMap,
   formatLongDate,
   monthBounds,
   monthGrid,
@@ -25,26 +23,9 @@ import {
   WEEKDAYS_MONDAY_FIRST,
   YearMonth,
 } from './attendanceModel';
+import { monthDays } from './calendarDays';
 
 const pct = (p: number | null) => (p == null ? '—' : `${p}%`);
-
-/** Screen-reader labels and cell data for the visible month. */
-function monthDays(map: DayMap, ym: YearMonth): Map<string, CalendarDay> {
-  const out = new Map<string, CalendarDay>();
-  const prefix = `${ym.year}-${String(ym.month).padStart(2, '0')}-`;
-  for (const [key, d] of map) {
-    if (!key.startsWith(prefix)) continue;
-    out.set(key, {
-      status: d.status,
-      mark: d.status === 'present' ? 'P' : d.status === 'absent' ? 'A' : d.status === 'other' ? (d.code ?? '').slice(0, 2) : undefined,
-      holiday: d.holidays.length > 0,
-      vacation: d.vacations.length > 0,
-      event: d.events.length > 0,
-      label: dayLabel(key, d),
-    });
-  }
-  return out;
-}
 
 /** The student's own attendance: month calendar, totals, and per-day detail. Read-only. */
 export function AttendanceScreen(_props: { tile: MenuTile }) {

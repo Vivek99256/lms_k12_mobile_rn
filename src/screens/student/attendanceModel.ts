@@ -198,8 +198,8 @@ export function statusText(d?: DayInfo): string {
 }
 
 /** Screen-reader label for a calendar cell: colour is never the only signal. */
-export function dayLabel(key: string, d?: DayInfo): string {
-  const parts = [formatLongDate(key), statusText(d)];
+export function dayLabel(key: string, d?: DayInfo, includeStatus = true): string {
+  const parts = includeStatus ? [formatLongDate(key), statusText(d)] : [formatLongDate(key)];
   for (const h of d?.holidays ?? []) parts.push(`Holiday: ${h.title || 'holiday'}`);
   for (const v of d?.vacations ?? []) parts.push(`Vacation: ${v.title || 'vacation'}`);
   for (const e of d?.events ?? []) parts.push(`Event: ${e.title || 'event'}`);

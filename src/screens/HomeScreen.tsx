@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { RefreshControl, ScrollView, Text, View } from 'react-native';
@@ -13,13 +13,14 @@ import { Card, ErrorState } from '../components/ui';
 import { colors, fonts, gradients, radius, shadow, spacing } from '../config/theme';
 import { useBootstrap } from '../hooks/useBootstrap';
 import { dashboardEndpoint } from '../utils/helpers';
+import { StudentDashboard } from './student/StudentDashboard';
 
 function greeting() {
   const h = new Date().getHours();
   return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
 }
 
-function Dashboard({ roleName }: { roleName: string }) {
+function GenericDashboard({ roleName }: { roleName: string }) {
   const q = useQuery({
     queryKey: ['dashboard', roleName],
     queryFn: () => callAuto(dashboardEndpoint(roleName)),
@@ -51,6 +52,12 @@ function Dashboard({ roleName }: { roleName: string }) {
   );
 }
 
+/** Students get the purpose-built dashboard (S1); every other role keeps the generic one unchanged. */
+function Dashboard({ roleName }: { roleName: string }) {
+  const isStudent = useAuthStore((s) => s.user?.isStudent);
+  return isStudent ? <StudentDashboard /> : <GenericDashboard roleName={roleName} />;
+}
+
 function HomeSkeleton() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg, padding: spacing.md, paddingTop: 70, gap: spacing.md }}>
@@ -65,6 +72,7 @@ function HomeSkeleton() {
 export function HomeScreen() {
   const user = useAuthStore((s) => s.user);
   const boot = useBootstrap();
+  const queryClient = useQueryClient();
 
   if (boot.isLoading) return <HomeSkeleton />;
   if (boot.isError) return <ErrorState message={userMessage(boot.error)} onRetry={() => void boot.refetch()} />;
@@ -83,7 +91,17 @@ export function HomeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
-        refreshControl={<RefreshControl refreshing={boot.isRefetching} onRefresh={() => void boot.refetch()} tintColor={colors.primary} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={boot.isRefetching}
+            onRefresh={() => {
+              void boot.refetch();
+              void queryClient.invalidateQueries({ queryKey: ['student-dashboard'] });
+              void queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+            }}
+            tintColor={colors.primary}
+          />
+        }
       >
         <SafeAreaView edges={['top']} style={{ paddingHorizontal: spacing.md, paddingTop: spacing.sm }}>
           <LinearGradient
