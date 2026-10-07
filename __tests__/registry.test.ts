@@ -2,8 +2,10 @@ import { screenRegistry } from '../src/screens/registry';
 import { AcademicCalendarScreen } from '../src/screens/student/AcademicCalendarScreen';
 import { AttendanceScreen } from '../src/screens/student/AttendanceScreen';
 import { CircularsScreen } from '../src/screens/student/CircularsScreen';
+import { ExamScheduleScreen } from '../src/screens/student/ExamScheduleScreen';
 import { HolidayListScreen } from '../src/screens/student/HolidayListScreen';
 import { NotificationHubScreen } from '../src/screens/student/NotificationHubScreen';
+import { TimetableScreen } from '../src/screens/student/TimetableScreen';
 
 jest.mock('expo-secure-store', () => ({ getItemAsync: jest.fn(), setItemAsync: jest.fn(), deleteItemAsync: jest.fn() }));
 
@@ -19,17 +21,26 @@ describe('screenRegistry', () => {
     expect(screenRegistry.circular_events).toBe(CircularsScreen);
   });
 
+  it('maps the two S3 tiles to their dedicated screens', () => {
+    expect(screenRegistry.time_table).toBe(TimetableScreen);
+    expect(screenRegistry.exam_schedule).toBe(ExamScheduleScreen);
+  });
+
   it('has exactly the registered student screens and claims no staff names (they keep their existing fallback)', () => {
     expect(Object.keys(screenRegistry).sort()).toEqual([
       'academic_calendar',
       'circular_events',
+      'exam_schedule',
       'holiday_list',
       'notification_hub',
       'student_attendance',
+      'time_table',
     ]);
     expect(screenRegistry.t_take_attendance).toBeUndefined();
     expect(screenRegistry.t_circular).toBeUndefined();
     expect(screenRegistry.t_calander).toBeUndefined();
+    expect(screenRegistry.t_timetable).toBeUndefined(); // the teacher tiles are different screens
+    expect(screenRegistry.t_exam_schedule).toBeUndefined();
     expect(screenRegistry.something_else).toBeUndefined();
   });
 });

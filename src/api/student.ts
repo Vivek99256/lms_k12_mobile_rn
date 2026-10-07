@@ -193,3 +193,53 @@ export async function fetchStudentDashboard(): Promise<StudentDashboard> {
   const res = await api.post<unknown>('api/student-dashboard/summary');
   return parseDashboard(res.raw);
 }
+
+// ---------------------------------------------------------------------------------------------
+// S3 - student timetable and exam schedule
+// ---------------------------------------------------------------------------------------------
+
+/** One period of the student's class timetable (`POST studentTimetableAPI`). Text fields are exactly what the server sent. */
+export interface TimetableEntry {
+  /** `Mon`..`Sat`; empty when the stored weekday code is not one the server maps (for example Sunday). */
+  weekDay: string;
+  periodId: string;
+  periodName: string;
+  /** `HH:MM:SS` (a TIME column), or empty. */
+  startTime: string;
+  endTime: string;
+  /** GROUP_CONCAT on the server: several subjects (e.g. batches) arrive as one comma-joined string. */
+  subject: string;
+  teacher: string;
+}
+
+/**
+ * The student's timetable for the current school year. `POST studentTimetableAPI` (routes/web.php:476).
+ * Identity (student_id, sub_institute_id, syear) comes from the session via the legacy client; this takes no ids.
+ */
+export async function fetchTimetable(): Promise<TimetableEntry[]> {
+  const res = await legacy.post<unknown>('studentTimetableAPI');
+  return list(res.data, (r) => ({
+    weekDay: text(r.week_day),
+    periodId: text(r.period_id),
+    periodName: text(r.period_name),
+    startTime: text(r.start_time),
+    endTime: text(r.end_time),
+    subject: text(r.subject_name),
+    teacher: text(r.teacher_name),
+  }));
+}
+
+/** One published exam schedule (`POST studentExamScheduleAPI`). The server returns no id. */
+export interface ExamEntry {
+  title: string;
+  /** As sent: a `date` column (`YYYY-MM-DD`). */
+  date: string;
+  /** Empty, or an absolute URL the server built from its own host name; the screen checks it before use. */
+  file: string;
+}
+
+/** `POST studentExamScheduleAPI` (routes/student.php:182): schedules for the student's class and division, newest date first. */
+export async function fetchExamSchedule(): Promise<ExamEntry[]> {
+  const res = await legacy.post<unknown>('studentExamScheduleAPI');
+  return list(res.data, (r) => ({ title: text(r.title), date: text(r.date_), file: text(r.file_name) }));
+}

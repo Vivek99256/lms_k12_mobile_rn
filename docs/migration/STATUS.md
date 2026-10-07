@@ -8,13 +8,15 @@ Single source of status. Updated at the end of every reply. Rules and rationale:
 - **Step 3 — Document F1 + S2: APPROVED** (2026-10-07).
 - **Step 4 — Build F1 + S2: DONE, signed off 2026-10-07.** Committed as f2e62e2 on branch `migration/f1-s2`.
 - **Step 3 — Document S1: APPROVED** (2026-10-07; Q17, Q18 incl. S1-D1…D6, Q19 all yes).
-- **Step 4 — Build S1: DONE, signed off 2026-10-07.** Committed on branch `migration/s1-student-home`.
+- **Step 4 — Build S1: DONE, signed off 2026-10-07.** Committed as 27c5c66 on branch `migration/s1-student-home`.
+- **Step 3 — Document S3: APPROVED** (2026-10-07; Q21 yes, Q22 option c).
+- **Step 4 — Build S3: DONE, signed off 2026-10-07.** Committed on branch `migration/s3-timetable-exam-schedule`.
 
 ## Waiting on you
-Sign off S1 (or tell me what to change) and say whether to commit it; **Q16 stays open** (is the remote database production? until you confirm, no real student data is read). Decide on the pre-existing `expo-asset` finding (Q20, see S1 §13): it needs an on-device bundling check and possibly `npx expo install expo-asset`. Choose the next sub-module to document.
+Sign off S3 (or tell me what to change) and say whether to commit it. **Q16 stays open** (no real student data until you confirm the database environment). Plan the coordinated device/emulator pass for S1–S3 when you want it (needs your go-ahead: local native dev build, generated `android/`). Choose the next sub-module to document.
 
 ## Legend
-Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (web-only). Status: `planned → doc-approved → built → verified → done`. Statuses: F1 and S2 are `done`; S1 is `done`; everything else `planned`.
+Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (web-only). Status: `planned → doc-approved → built → verified → done`. Statuses: F1 and S2 are `done`; S1 is `done`; S3 is `done`; everything else `planned`.
 
 ## Foundation
 | ID | Sub-module | Class | Depends | Doc | Status |
@@ -30,7 +32,7 @@ Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (
 |---|---|---|---|---|---|---|
 | S1 | Home dashboard, notification hub, circulars & events, academic calendar & holidays | V1 | circular needs `action`, 500 if no enrollment, JSON body breaks it (form-encoding required) | F1, S2 | [S1](modules/S1-student-home.md) | DONE (signed off 2026-10-07); real-data check deliberately pending (Q16) |
 | S2 | Attendance | V1 | no ownership check on server | F1 | [S2](modules/S2-student-attendance.md) | DONE (signed off 2026-10-07); real-data check deliberately pending, DB treated as possibly production (Q16) |
-| S3 | Timetable, exam schedule | V1 | re-sort weekdays | F1,F3 | – | planned |
+| S3 | Timetable, exam schedule | V1 | weekday order is alphabetical (client re-sorts); batch periods concatenated; exam file links may be dead for teacher-mobile uploads | F1, S1 | [S3](modules/S3-timetable-exam-schedule.md) | DONE (signed off 2026-10-07); real-data and device checks deliberately pending (Q16; coordinated pass) |
 | S4a | Homework list/detail | V1 | needs `action` | F1,F3 | – | planned |
 | S4b | Homework submit (upload) | V1 | – | S4a,F5 | – | planned |
 | S5 | Results PDF, WRT progress | V1 | heavy/unsafe PDF endpoints | F1,F3 | – | planned |
@@ -90,7 +92,7 @@ Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (
 fees reports/masters/NACH · lms exam builder & analytics · pal staff authoring · h5p · student CRUD/reports/ID cards/certificates · result report cards/reports/masters · hrit policy & payroll · talent-management, organization-management, people-competency, capability-intelligence · enterprise-brain, ai, platform-* · Inventory/Transportation/hostel/library masters · front_desk masters · admin-services petty cash/consent master · easy_com gateway config · general, academic_setup, user, integration, Utility, teach-learn, imports, builders, authoring, placeholders. Nothing is dropped silently: each is listed in 03 §3.4.
 
 ## Baseline facts
-- Mobile repo after S1: `npm run typecheck` clean; `jest` 26 suites, **232 passed, 6 skipped (opt-in local tests), 0 failed** (F1+S2 baseline 100; original 20).
+- Mobile repo after S3: `npm run typecheck` clean; `jest` 33 suites, **315 passed, 10 skipped (opt-in local tests), 0 failed** (after S1: 232; F1+S2: 100; original: 20). `npx expo export` for Android still bundles (1056 modules).
 - Laravel and Next.js: read-only; not modified by this work.
 - Database: only `SELECT` run, only on `mobile_homescreen` and `teacher_mobile_homescreen`.
 
@@ -108,3 +110,7 @@ fees reports/masters/NACH · lms exam builder & analytics · pal staff authoring
 | 2026-10-07 | S1 research: read dashboard/notification/circular/calendar controllers; local probes with non-existent ids (JSON body breaks circular/fetchData; circular 500 when no enrollment; dashboard 422/403/empty shapes). S1 document written. Awaiting approval. |
 | 2026-10-07 | S1 approved (Q17-Q19 yes); one SELECT on circular_type: 1 Circular, 2 Event. |
 | 2026-10-07 | S1 built (calendar, notifications, circulars, dashboard + Home); 232 tests pass; local verification with synthetic ids only; S1 document updated with actuals. Found: expo-asset not hoisted (pre-existing). Awaiting sign-off; uncommitted. |
+| 2026-10-07 | S1 signed off and committed (27c5c66, branch migration/s1-student-home); pre-commit scan clean. |
+| 2026-10-07 | Q20: Metro bundles the app for Android (1049 modules) and iOS with no unresolved modules, so `expo-asset` was NOT installed; `package.json` untouched. |
+| 2026-10-07 | S3 research (controllers, web staff pages, Flutter reference, local probes with student 0) and S3 document written. Awaiting approval. |
+| 2026-10-07 | S3 approved (Q21 yes, Q22 option c). S3 built: timetable then exam schedule; 83 new tests; 315 passing; local verification with synthetic ids over real HTTP (10/10 opt-in tests, plus the localhost 419 check); S3 document updated with actuals. Awaiting sign-off; uncommitted. |

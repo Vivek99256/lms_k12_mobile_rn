@@ -243,3 +243,6 @@ Server stopped afterwards (port 8000 free). The only database access was SELECTs
 
 ### Rollback
 1. Remove the four S1 lines from `src/screens/registry.ts` (tiles fall back to `GenericDataScreen`, today's behaviour) and the student branch in `HomeScreen.tsx`'s `Dashboard` wrapper — or `git revert` the S1 commit(s) once committed. 2. The `monthDays` move and the `dayLabel` optional parameter are behaviour-neutral for S2; revert them in the same commit. 3. F1 and S2 are unaffected. JS-only; once EAS Update is configured, `eas update:rollback` also works. No server or data change was made.
+
+### Addendum — Q20 result (2026-10-07, after sign-off)
+The `expo-asset` finding above was checked with Metro's production-style bundler (`npx expo export` for Android and iOS): both bundles built with no unresolved modules (Android: 1049 modules, 2.6 MB Hermes bundle including the icon fonts). `expo-asset` was therefore **not** installed and `package.json` is unchanged; only Jest's resolver cannot follow the nested copy, which is why the Home test mocks `@expo/vector-icons`. Running the app on a device or emulator is still unverified.

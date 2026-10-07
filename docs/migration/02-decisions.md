@@ -137,3 +137,27 @@ A workaround is allowed only if it is safe, stable, maintainable, and does **not
 - **Q20:** yes — check the app in a development build; install `expo-asset` (Expo-compatible command, direct dependency) **only if** the build shows it is genuinely needed; do not install it preemptively; do not upgrade other Expo/React Native packages; document the result; rerun typecheck and the full suite after any dependency change.
 - **Next module:** S3 — Timetable and Exam Schedule. Document first; do not build.
 
+## Q20 result (2026-10-07) — expo-asset: NOT installed
+- **Check:** a real native dev build needs EAS or a local toolchain that is not set up, so the question "can the app's imports resolve `expo-asset`?" was tested with Metro's production-style bundler, which is what a device build runs: `npx expo export --platform android` and `--platform ios` (output written outside the repo).
+- **Result:** both exported successfully — Android bundled 1049 modules into a 2.6 MB Hermes bundle including all `@expo/vector-icons` fonts; no "unable to resolve" or warning lines on either platform.
+- **Conclusion:** the nested `expo-asset` (under `node_modules/expo/node_modules`) is **not** a build problem; only **Jest's** resolver cannot follow it (that is why tests that import the icons mock `@expo/vector-icons`). Per your rule ("do not install it preemptively if the dev build works") **no dependency was added**; `package.json` and the lockfile are unchanged. Not verified: running the app on a device/emulator (see Q22).
+
+## S3 proposals (2026-10-07) — PROPOSED, see [S3 document](modules/S3-timetable-exam-schedule.md) §8, §12, §17
+- **S3-D1** times in 12-hour format. **S3-D2** day strip Monday–Saturday, opens on today (Sunday → Monday). **S3-D3** periods sorted by start time then period id. **S3-D4** exams split into Upcoming / Earlier. **S3-D5** subject/teacher text shown exactly as sent (no comma splitting). **S3-D6** reuse S1's `safeAttachmentUrl` for the exam file link. Plus: exam rows with an unreadable date are kept under "Date to be confirmed".
+- **Open:** Q21 approve the S3 document and decisions; Q22 device-verification choice (a/b/c). Q16 stays open.
+
+## Answers received (2026-10-07, S3 approval)
+- **Q21** yes — S3 document and S3-D1…D6 approved (12-hour times, Monday–Saturday strip opening on today with Sunday → Monday, start-time order, Other chip, Upcoming/Earlier, text as sent, F1 link validation) plus "Date to be confirmed" for unreadable exam dates.
+- **Q22** option (c) — component/integration tests and local-server verification now; no Android native project is generated for S3; one coordinated device/emulator pass for all completed student modules (S1–S3) later.
+- **Q16** remains OPEN; synthetic/non-existent ids only. **Commit:** none until you approve.
+
+## S3 implementation notes (2026-10-07)
+- Built as approved; deviations are small and listed in the S3 document §18 (empty-row skipping, Other-only timetable not "empty", full day names accepted, "—" for a missing time, 52/44 dp chips, optional `pinToday` argument in the test helper).
+- **Open:** sign-off and commit decision for S3; when to run the coordinated device pass (Q23 — needs your go-ahead for a local native dev build); next module.
+
+## Answers received (2026-10-07, S3 sign-off → next module)
+- **S3:** signed off as done; commit approved (S3 implementation, tests and related documentation only).
+- **Q16:** stays OPEN — real student data off-limits; synthetic / non-existent ids and the local server only.
+- **Device verification (standing instruction):** no native device/emulator build yet. After the next few student modules, **one coordinated verification pass** covering S1, S2 and S3 (and any module finished by then) — **you will explicitly approve the native build** when we reach it. Minimum scope for that pass: home/dashboard rendering; calendar and `MonthCalendar`; notifications; circulars/events; timetable day strip and scrolling; exam schedule; pull-to-refresh; loading/error/empty states; touch targets; navigation and web hand-off; Android bundle/native build behaviour.
+- **Next module:** the next student sub-module in the approved build order (03 §5): **S4a — Homework list/detail**. Document first; do not build.
+

@@ -41,10 +41,10 @@ export const tile = (screenName: string, title = screenName): MenuTile => ({
   openMode: 'in_app',
 });
 
-/** Pins "today" to 7 October 2026 (device local time). Only Date is faked: timers stay real for react-query. */
-export function pinToday() {
+/** Pins "today" (default: Wednesday 7 October 2026, device local time). Only Date is faked: timers stay real for react-query. */
+export function pinToday(now: Date = new Date(2026, 9, 7, 12, 0, 0)) {
   jest.useFakeTimers({
-    now: new Date(2026, 9, 7, 12, 0, 0),
+    now,
     doNotFake: ['nextTick', 'setImmediate', 'clearImmediate', 'setInterval', 'clearInterval', 'setTimeout', 'clearTimeout', 'queueMicrotask', 'requestAnimationFrame', 'cancelAnimationFrame', 'performance', 'hrtime'],
   });
 }

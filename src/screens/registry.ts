@@ -3,8 +3,10 @@ import { MenuTile } from '../menu/types';
 import { AcademicCalendarScreen } from './student/AcademicCalendarScreen';
 import { AttendanceScreen } from './student/AttendanceScreen';
 import { CircularsScreen } from './student/CircularsScreen';
+import { ExamScheduleScreen } from './student/ExamScheduleScreen';
 import { HolidayListScreen } from './student/HolidayListScreen';
 import { NotificationHubScreen } from './student/NotificationHubScreen';
+import { TimetableScreen } from './student/TimetableScreen';
 
 export type TileScreenComponent = React.ComponentType<{ tile: MenuTile }>;
 
@@ -21,6 +23,9 @@ export const screenRegistry: Record<string, TileScreenComponent> = {
   holiday_list: HolidayListScreen,
   notification_hub: NotificationHubScreen,
   circular_events: CircularsScreen,
+  // S3 - timetable and exam schedule (studentTimetableAPI, studentExamScheduleAPI)
+  time_table: TimetableScreen,
+  exam_schedule: ExamScheduleScreen,
 };
 
 export function registerScreens(entries: Record<string, TileScreenComponent>) {

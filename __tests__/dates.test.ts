@@ -61,3 +61,21 @@ describe('date helpers', () => {
     expect(displayDate(42)).toBe('');
   });
 });
+
+import { dateWithWeekday, weekdayShort } from '../src/utils/dates';
+
+describe('weekday helpers (S3)', () => {
+  it('weekdayShort is right across month, year and leap boundaries', () => {
+    expect(weekdayShort('2026-10-07')).toBe('Wed');
+    expect(weekdayShort('2026-10-11')).toBe('Sun');
+    expect(weekdayShort('2026-10-10')).toBe('Sat');
+    expect(weekdayShort('2028-02-29')).toBe('Tue');
+    expect(weekdayShort('2026-01-01')).toBe('Thu');
+    expect(weekdayShort('2026-12-31')).toBe('Thu');
+  });
+
+  it('dateWithWeekday formats like "Tue, 20 Oct 2026"', () => {
+    expect(dateWithWeekday('2026-10-20')).toBe('Tue, 20 Oct 2026');
+    expect(dateWithWeekday('2026-08-01')).toBe('Sat, 1 Aug 2026');
+  });
+});

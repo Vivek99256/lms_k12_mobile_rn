@@ -56,3 +56,14 @@ export function displayDate(v: unknown): string {
   if (key) return shortDate(key);
   return typeof v === 'string' ? v.trim() : '';
 }
+
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
+
+/** `Mon`..`Sun` for a `YYYY-MM-DD` key (UTC calendar arithmetic, so it never shifts with the device time zone). */
+export function weekdayShort(key: string): string {
+  const [y, m, d] = key.split('-').map(Number);
+  return WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
+}
+
+/** `Tue, 12 Oct 2026` */
+export const dateWithWeekday = (key: string): string => `${weekdayShort(key)}, ${shortDate(key)}`;
