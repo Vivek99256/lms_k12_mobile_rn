@@ -19,10 +19,12 @@ Single source of status. Updated at the end of every reply. Rules and rationale:
 - **Step 3 — Document S5 (results): APPROVED** (2026-10-07; Q27 option A, Q28 S5-D2…D6 yes incl. external-viewer-only opening, Q29 S5b/c/d future/blocker items).
 - **Step 4 — Build S5a: DONE, signed off 2026-10-07.** Committed on branch `migration/s5a-result-pdfs`. S5b/c/d are future/blocker items and must not be implemented.
 - **Step 3 — Document S7 (leave and communication): APPROVED** (2026-10-07; Q30 option A — build S7c, S7a, S7b view-only; Q31 S7-D2…D8 yes; Q32 S7d/S7e future scope).
-- **Step 4 — Build S7c + S7a + S7b: DONE, signed off 2026-10-07.** Committed on branch `migration/s7-leave-communication`. S7d/S7e are future scope and not implemented.
+- **Step 4 — Build S7c + S7a + S7b: DONE, signed off 2026-10-07.** Committed as a842611 on branch `migration/s7-leave-communication`. S7d/S7e are future scope and not implemented.
+- **Step 3 — Document S9 (my records): APPROVED** (2026-10-07; Q33 option A, Q34 S9-D2…D11 yes with the health-data requirements, Q35 backend ask written separately).
+- **Step 4 — Build S9a: DONE, signed off 2026-10-07.** Committed on branch `migration/s9-my-records`. S9b (hostel, achievement certificate) stays blocked on the backend ([ask](backend-asks/S9-blocked-tiles.md)).
 
 ## Waiting on you
-Review the S9 scope/design (document to follow) and approve or adjust it. **Q16 stays open** (no real student data). The coordinated S1–S7 device pass stays deferred and needs your explicit approval of the native build. S4b, S5b/c/d, S6b/c/d, S7d/e are not approved.
+Review the S10 scope/design (document to follow) and approve or adjust it. **Q16 stays open** (no real student data). The coordinated S1–S9 device pass stays deferred and needs your explicit approval of the native build. S4b, S5b/c/d, S6b/c/d, S7d/e and S9b are not approved.
 
 ## Legend
 Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (web-only). Status: `planned → doc-approved → built → verified → done`. Statuses: F1 and S2 are `done`; S1 is `done`; S3 is `done`; S4a is `done`; everything else `planned`.
@@ -60,8 +62,8 @@ Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (
 | S8a | Learn (subjects/content), social collaborative | V1 | content route unread | F1,F3 | – | planned |
 | S8b | Leaderboard, portfolio, virtual classroom | Later | 3 tenants | – | – | planned |
 | S8c | Live lecture | V1⛔ | no endpoint | – | – | planned |
-| S9a | Health, height-weight, infirmary, consent, vaccination, certificates, transport | V1 | `status_code` variants | F1,F3 | – | planned |
-| S9b | Hostel, achievement certificate | V1⛔ | school read from `session()` | – | – | planned |
+| S9a | My records, view only: height & weight, vaccination, health details, infirmary, consent, transport, certificates (text version) | V1 | legacy read endpoints (JWT always checked, no ownership check); health data highly sensitive; public health-document URLs; health has no year filter; certificates are HTML | F1, S1 | [S9](modules/S9-my-records.md) | DONE (signed off 2026-10-07); real-data and device checks deliberately pending (Q16; coordinated pass) |
+| S9b | Hostel, achievement certificate | V1⛔ | school read from `session()` (hostel; `document_details` also GET-only, no JWT) — broken for token callers; tiles show "This isn't available in the app yet." and make no request | – | [S9](modules/S9-my-records.md) §3, §10; [backend ask](backend-asks/S9-blocked-tiles.md) | blocked on backend; message only |
 | S10a | School info (9 tiles), photo/video gallery | V1 | `action` must equal stored type | F1,F3 | – | planned |
 | S10b | Classwork gallery | V1 (verify) | backend route unverified | F1 | – | planned |
 | S11 | Face-capture photos | Later | no recognition backend | F5 | – | planned |
@@ -108,7 +110,7 @@ Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (
 fees reports/masters/NACH · lms exam builder & analytics · pal staff authoring · h5p · student CRUD/reports/ID cards/certificates · result report cards/reports/masters · hrit policy & payroll · talent-management, organization-management, people-competency, capability-intelligence · enterprise-brain, ai, platform-* · Inventory/Transportation/hostel/library masters · front_desk masters · admin-services petty cash/consent master · easy_com gateway config · general, academic_setup, user, integration, Utility, teach-learn, imports, builders, authoring, placeholders. Nothing is dropped silently: each is listed in 03 §3.4.
 
 ## Baseline facts
-- Mobile repo after S7: `npm run typecheck` clean; `jest` 56 suites (49 run, 7 opt-in skipped), **638 passed, 29 skipped (opt-in local tests), 0 failed** (after S5a: 543; S6a: 476; S4a: 411; S3: 315; S1: 232; F1+S2: 100; original: 20).
+- Mobile repo after S9: `npm run typecheck` clean; `jest` 60 suites (52 run, 8 opt-in skipped), **814 passed, 32 skipped (opt-in local tests), 0 failed** (after S7: 638; S5a: 543; S6a: 476; S4a: 411; S3: 315; S1: 232; F1+S2: 100; original: 20).
 - Laravel and Next.js: read-only; not modified by this work.
 - Database: only `SELECT` run, only on `mobile_homescreen` and `teacher_mobile_homescreen`.
 
@@ -142,3 +144,6 @@ fees reports/masters/NACH · lms exam builder & analytics · pal staff authoring
 | 2026-10-07 | S7 research (web, production menu, Flutter reference, legacy read/write/staff endpoints; read-only local probes with a non-existent student; no write endpoint called) and S7 document written. Proposes S7a/b/c view-only; S7d/e writes identified, not proposed. Laravel untouched. Awaiting approval. |
 | 2026-10-07 | S7 approved (Q30 option A, Q31 yes, Q32 future scope). S7c, S7a, S7b built, view only: subject teachers (mobile/image dropped), leave list (newest first, empty status = Pending, staff reply, validated attachment), messages list (`status_code` envelope, reply/awaiting); 95 new tests; 638 passing; local verification with a non-existent student over real HTTP (6/6 opt-in tests; server log shows only the three read paths); S7 document updated with actuals. Awaiting review; uncommitted. |
 | 2026-10-07 | S7 (S7c, S7a, S7b) signed off (DONE) and committed on branch migration/s7-leave-communication. |
+| 2026-10-07 | S9 research (web, production menu, Flutter reference, nine read endpoints incl. two broken ones; read-only local probes with a non-existent student) and S9 scope/design document written. Proposes seven view-only lists; hostel and achievement certificate blocked. Laravel untouched. Awaiting approval. |
+| 2026-10-07 | S9 approved (Q33 option A, Q34 yes, Q35 backend ask separate). S9a built, view only: height & weight, vaccination, health details, infirmary, consent, transport, certificates (text version) + unavailable state for hostel/achievement certificate; records dropped from memory on unmount (stricter than planned), no logging/persistence; 176 new tests; 814 passing; local verification with a non-existent student over real HTTP (3/3 opt-in tests; server log shows only the seven read paths); S9 document updated with actuals; backend ask written. Awaiting review; uncommitted. |
+| 2026-10-07 | S9a signed off (DONE) and committed on branch migration/s9-my-records. Stricter health-data handling approved (no console logging, no persistence, no share/export, gcTime 0, dropped on unmount). |

@@ -7,6 +7,8 @@ import { FeesSummaryScreen } from '../src/screens/student/FeesSummaryScreen';
 import { HolidayListScreen } from '../src/screens/student/HolidayListScreen';
 import { HomeworkScreen } from '../src/screens/student/HomeworkScreen';
 import { NotificationHubScreen } from '../src/screens/student/NotificationHubScreen';
+import { CertificatesScreen, ConsentScreen, HealthDetailsScreen, HeightWeightScreen, InfirmaryScreen, TransportScreen, VaccinationScreen } from '../src/screens/student/RecordScreens';
+import { RecordUnavailableScreen } from '../src/screens/student/RecordUnavailableScreen';
 import { ResultPdfScreen } from '../src/screens/student/ResultPdfScreen';
 import { LeaveApplicationsScreen } from '../src/screens/student/LeaveApplicationsScreen';
 import { ParentCommunicationScreen } from '../src/screens/student/ParentCommunicationScreen';
@@ -50,12 +52,27 @@ describe('screenRegistry', () => {
     expect(screenRegistry.parent_communication).toBe(ParentCommunicationScreen);
   });
 
+  it('maps the S9 tiles to the record lists and the two blocked tiles to the unavailable message', () => {
+    expect(screenRegistry.height_weight).toBe(HeightWeightScreen);
+    expect(screenRegistry.student_vaccination).toBe(VaccinationScreen);
+    expect(screenRegistry.health_details).toBe(HealthDetailsScreen);
+    expect(screenRegistry.student_infirmary).toBe(InfirmaryScreen);
+    expect(screenRegistry.student_consent).toBe(ConsentScreen);
+    expect(screenRegistry.student_transport).toBe(TransportScreen);
+    expect(screenRegistry.student_certificate).toBe(CertificatesScreen);
+    expect(screenRegistry.student_hostel).toBe(RecordUnavailableScreen);
+    expect(screenRegistry.achievement_certificate).toBe(RecordUnavailableScreen);
+  });
+
   it('has exactly the registered student screens and claims no staff names (they keep their existing fallback)', () => {
     expect(Object.keys(screenRegistry).sort()).toEqual([
       'academic_calendar',
+      'achievement_certificate',
       'circular_events',
       'exam_schedule',
       'fees',
+      'health_details',
+      'height_weight',
       'holiday_list',
       'home_work',
       'leave_application',
@@ -63,6 +80,12 @@ describe('screenRegistry', () => {
       'parent_communication',
       'result_pdf',
       'student_attendance',
+      'student_certificate',
+      'student_consent',
+      'student_hostel',
+      'student_infirmary',
+      'student_transport',
+      'student_vaccination',
       'subjects',
       'time_table',
     ]);

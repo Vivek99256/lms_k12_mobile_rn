@@ -544,3 +544,161 @@ export async function fetchParentMessages(): Promise<ParentMessage[]> {
     replyOn: text(r.reply_on),
   }));
 }
+
+// ---------------------------------------------------------------------------------------------
+// S9 - my records (VIEW ONLY): height & weight, vaccination, health details, infirmary, consent, transport and
+// certificates. Legacy READ endpoints only; each checks the JWT on every call, and F1 sends the Bearer token and
+// type=API. These are children's health records: they are held in memory only (the TanStack cache) and are never
+// logged or persisted. Never called: studentHostelAllocationAPI and document_details (broken for token callers),
+// the staff student-care/infirmary CRUD, consent/* resources, any write (docs/migration/modules/S9-my-records.md §3).
+// ---------------------------------------------------------------------------------------------
+
+/** `d-m-Y` dates are kept as sent; the models read them. */
+export interface HeightWeightRecord {
+  doctorName: string;
+  doctorContact: string;
+  /** As recorded. The server sends no unit and the app adds none. */
+  height: string;
+  weight: string;
+  date: string;
+}
+
+export interface VaccinationRecord {
+  doctorName: string;
+  doctorContact: string;
+  vaccinationType: string;
+  note: string;
+  date: string;
+}
+
+export interface HealthRecord {
+  doctorName: string;
+  doctorContact: string;
+  remarks: string;
+  date: string;
+  /** Always a URL from the server; the `noimages.png` placeholder means "no document". Checked by the model before use. */
+  file: string;
+}
+
+export interface InfirmaryRecord {
+  doctorName: string;
+  doctorContact: string;
+  caseNo: string;
+  date: string;
+  complaint: string;
+  symptoms: string;
+  disease: string;
+  treatments: string;
+  closeDate: string;
+  healthCenter: string;
+}
+
+/** The server's internal `imprest_head_id` and `created_by` are not read. */
+export interface ConsentRecord {
+  title: string;
+  date: string;
+  accountableStatus: string;
+  /** Empty when still pending (the server sends NULL). */
+  status: string;
+  amount: string;
+}
+
+export interface TransportRecord {
+  fromShift: string;
+  fromBus: string;
+  fromStop: string;
+  toShift: string;
+  toBus: string;
+  toStop: string;
+  /** A third-party tracking link, or ''. */
+  gpsLink: string;
+}
+
+export interface CertificateRecord {
+  type: string;
+  number: string;
+  /** The full certificate HTML; only ever flattened to text by the model. */
+  html: string;
+  createdAt: string;
+}
+
+async function fetchRecords<T>(path: string, pick: (r: Record<string, unknown>) => T): Promise<T[]> {
+  const res = await legacy.post<unknown>(path);
+  return list(res.data, pick);
+}
+
+/** `POST studentHWAPI` (routes/student.php:197; studentHWController.php:178-). Envelope `status_code`. */
+export const fetchHeightWeight = () =>
+  fetchRecords<HeightWeightRecord>('studentHWAPI', (r) => ({
+    doctorName: text(r.doctor_name),
+    doctorContact: text(r.doctor_contact),
+    height: text(r.height),
+    weight: text(r.weight),
+    date: text(r.date),
+  }));
+
+/** `POST studentVaccinationAPI` (routes/student.php:196; studentVaccinationController.php:179-). Envelope `status_code`. */
+export const fetchVaccinations = () =>
+  fetchRecords<VaccinationRecord>('studentVaccinationAPI', (r) => ({
+    doctorName: text(r.doctor_name),
+    doctorContact: text(r.doctor_contact),
+    vaccinationType: text(r.vaccination_type),
+    note: text(r.note),
+    date: text(r.date),
+  }));
+
+/** `POST studentHealthAPI` (routes/student.php:181; studentHealthController.php:212-). Envelope `status`; the server applies no year filter. */
+export const fetchHealthRecords = () =>
+  fetchRecords<HealthRecord>('studentHealthAPI', (r) => ({
+    doctorName: text(r.doctor_name),
+    doctorContact: text(r.doctor_contact),
+    remarks: text(r.remarks),
+    date: text(r.date),
+    file: text(r.file),
+  }));
+
+/** `POST studentInfirmaryAPI` (routes/student.php:195; studentInfirmaryController.php:400-). Envelope `status_code`. */
+export const fetchInfirmaryRecords = () =>
+  fetchRecords<InfirmaryRecord>('studentInfirmaryAPI', (r) => ({
+    doctorName: text(r.doctor_name),
+    doctorContact: text(r.doctor_contact),
+    caseNo: text(r.medical_case_no),
+    date: text(r.date),
+    complaint: text(r.complaint),
+    symptoms: text(r.symptoms),
+    disease: text(r.disease),
+    treatments: text(r.treatments),
+    closeDate: text(r.medical_close_date),
+    healthCenter: text(r.health_center),
+  }));
+
+/** `POST consentListAPI` (routes/consent.php:14; consent_masterController.php:156-). Envelope `status_code`. */
+export const fetchConsents = () =>
+  fetchRecords<ConsentRecord>('consentListAPI', (r) => ({
+    title: text(r.title),
+    date: text(r.consent_date),
+    accountableStatus: text(r.accountable_status),
+    status: text(r.consent_status),
+    amount: text(r.amount),
+  }));
+
+/** `POST studentTransportAPI` (routes/lms.php:364; lms_apiController.php:772-). Envelope `status`. A student with only a pick-up or only a drop is not returned by the server. */
+export const fetchTransport = () =>
+  fetchRecords<TransportRecord>('studentTransportAPI', (r) => ({
+    fromShift: text(r.from_shift),
+    fromBus: text(r.from_bus),
+    fromStop: text(r.from_stop_name),
+    toShift: text(r.to_shift),
+    toBus: text(r.to_bus),
+    toStop: text(r.to_stop_name),
+    gpsLink: text(r.gps_link),
+  }));
+
+/** `POST studentCertificateAPI` (routes/student.php:188; studentCertificateController.php:216-). Envelope `status_code`. */
+export const fetchCertificates = () =>
+  fetchRecords<CertificateRecord>('studentCertificateAPI', (r) => ({
+    type: text(r.certificate_type),
+    number: text(r.certificate_number),
+    html: text(r.certificate_html),
+    createdAt: text(r.created_at),
+  }));

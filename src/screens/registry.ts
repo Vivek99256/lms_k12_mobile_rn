@@ -10,6 +10,8 @@ import { HomeworkScreen } from './student/HomeworkScreen';
 import { NotificationHubScreen } from './student/NotificationHubScreen';
 import { LeaveApplicationsScreen } from './student/LeaveApplicationsScreen';
 import { ParentCommunicationScreen } from './student/ParentCommunicationScreen';
+import { CertificatesScreen, ConsentScreen, HealthDetailsScreen, HeightWeightScreen, InfirmaryScreen, TransportScreen, VaccinationScreen } from './student/RecordScreens';
+import { RecordUnavailableScreen } from './student/RecordUnavailableScreen';
 import { ResultPdfScreen } from './student/ResultPdfScreen';
 import { SubjectTeachersScreen } from './student/SubjectTeachersScreen';
 import { TimetableScreen } from './student/TimetableScreen';
@@ -43,6 +45,18 @@ export const screenRegistry: Record<string, TileScreenComponent> = {
   subjects: SubjectTeachersScreen,
   leave_application: LeaveApplicationsScreen,
   parent_communication: ParentCommunicationScreen,
+  // S9 - my records, view only (JWT-checked legacy read endpoints; tiles' stored api ignored)
+  height_weight: HeightWeightScreen,
+  student_vaccination: VaccinationScreen,
+  health_details: HealthDetailsScreen,
+  student_infirmary: InfirmaryScreen,
+  student_consent: ConsentScreen,
+  student_transport: TransportScreen,
+  student_certificate: CertificatesScreen,
+  // Hostel and Achievement Certificate cannot work for token callers (backend reads the school from session()):
+  // an honest message, no request.
+  student_hostel: RecordUnavailableScreen,
+  achievement_certificate: RecordUnavailableScreen,
 };
 
 export function registerScreens(entries: Record<string, TileScreenComponent>) {

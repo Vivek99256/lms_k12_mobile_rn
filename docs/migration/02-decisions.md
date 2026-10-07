@@ -248,3 +248,25 @@ A workaround is allowed only if it is safe, stable, maintainable, and does **not
 - **Q16:** stays OPEN. **Device pass:** the coordinated native/device pass stays deferred.
 - **Next module:** S9. Provide the S9 scope/design first and stop for approval; no S9 implementation before approval.
 
+## S9 proposals (2026-10-07, awaiting your answers)
+- **Q33 / S9-D1** scope. A (recommended): build all seven lists (height & weight, vaccination, health details, infirmary, consent, transport, certificates) plus the "not available" screen for hostel and achievement certificate. B: six lists, certificates later. C: do not build S9 now.
+- **Q34** S9-D2 legacy read endpoints only, dedicated screens ignoring the tiles' stored `api`; D3 newest first by record date; D4 health data in memory only, never logged/persisted/shared; D5 health document via `safeAttachmentUrl` (placeholder `noimages.png` = no file) and bus-tracking link via `isSafeHttpUrl`, both only in the phone's browser/viewer; D6 doctor contact shown as text, never tappable; D7 certificates as a text version (`stripHtml`) with a notice; D8 height/weight as recorded, no units invented; D9 consent: empty status = Pending, amount in ₹ when numeric, internal ids dropped, no consent action; D10 hostel and achievement certificate show "Not available in the app yet" and make no request; D11 never call blocked or staff endpoints.
+- **Q35** the two blocked tiles need backend changes; say if you want the backend ask written up separately.
+- **Q16** stays OPEN.
+
+## Answers received (2026-10-07, S9 approval)
+- **Q33** option A — build all seven view-only lists (height & weight, vaccination, health details, infirmary, consent, transport, certificates) and the "This isn't available in the app yet." state for Hostel and Achievement Certificate; no write, upload, consent, payment, edit or delete requests.
+- **Q34** yes — S9-D2…D11. Health data in memory only; never logged, persisted, cached, shared or exposed through debug output; no share/export; `noimages.png` = no health document; health shows "All years"; doctor phone numbers plain text only; newest first where the backend is oldest-first; null consent = Pending; certificates as the text-only HTML-stripped version with "Text version. For the official certificate, ask your school."; never invent height/weight units; do not fabricate missing transport data; hostel and achievement certificate never call their broken endpoints.
+- **Q35** yes — the backend ask for the two blocked tiles is written separately ([backend-asks/S9-blocked-tiles.md](backend-asks/S9-blocked-tiles.md)); no Laravel/backend change.
+- **Q16** remains OPEN. **Commit:** S9 stays uncommitted until you have reviewed it and separately approve the commit. **Device pass:** deferred; no new packages.
+
+## S9 implementation notes (2026-10-07)
+- Built as approved; deviations are listed in the S9 document §17. The one that goes beyond the plan: because health data must not be cached, the record screens use `gcTime: 0` and drop their data from memory when the screen unmounts (instead of the shared 5-minute per-user cache).
+- **Open:** review and sign-off of S9; commit approval; the coordinated device pass (explicit approval needed); next sub-module.
+
+## Answers received (2026-10-07, S9 sign-off → S10)
+- **S9:** signed off as done; commit approved (the seven view-only lists, the hostel / achievement certificate unavailable states, models, shared screens, hooks, fetchers, tests, S9 documentation, tracker updates and the separate backend ask; no Laravel, write functionality, broken-endpoint calls, device/native changes, secrets or generated files). **S9b stays blocked on the backend.**
+- The stricter health-data handling is approved: no console logging, no persistent storage, no sharing/export, `gcTime: 0`, query cache cleared after unmount, data held only in memory while the screen is active.
+- **Q16:** stays OPEN; synthetic / non-existent ids only. **Device pass:** deferred; do not start it.
+- **Next module:** the next planned module (S10 — school info and galleries) only after presenting its scope/design and stopping for approval.
+
