@@ -263,7 +263,7 @@ No `package.json`, native, Laravel or Next.js change; **no new package**. `stude
 
 
 
-## 18. S9c — Student Discipline (added 2026-10-07; approved for the plan, **NOT implemented**)
+## 18. S9c — Student Discipline (added 2026-10-07; implemented — see §19)
 Added to the plan on your Q41 answer after the S8 audit found the student tile **Student Discipline** (`child_remark`, **23** of 34 student tenants, ev:menu_tiles.txt line 11) had no module. **No S9c code exists yet; implementation needs your separate approval after S8.** Facts below are from code and from one local probe with a non-existent student.
 | | |
 |---|---|
@@ -280,3 +280,49 @@ Added to the plan on your Q41 answer after the S8 audit found the student tile *
 - newest first by `discipline_date`; plain text; nothing invented; unreadable dates shown as sent;
 - verification with synthetic / non-existent ids only (Q16): the local test would assert counts only and never inspect a body.
 Open points for the S9c document: how to show `flag` (as sent, unlabelled), and whether the screen needs an extra privacy note. Tracker row: S9c "proposed — awaiting implementation approval".
+
+## 19. S9c — what was actually done (2026-10-07) — signed off and committed (DONE)
+Built as approved after the S8 sign-off: **Student Discipline, view only**, on branch `migration/s9c-student-discipline` (created from `migration/s8-learning`), **uncommitted** — you will review and approve the commit separately. The endpoint, fields and requirements were already fully specified in §18, so no further details were needed before building.
+
+### Files (all under `D:/lms_k12_mobile_rn`)
+**Modified (5 source files — +65 lines, 2 lines changed; S1–S10 behaviour unchanged):** `src/api/student.ts` (`DisciplineRecord`, `fetchDiscipline`), `src/screens/student/recordsModel.ts` (`disciplineFlag`, `disciplineRows`), `src/screens/student/RecordScreens.tsx` (`DisciplineScreen`), `src/hooks/useStudentRecords.ts` (`useDiscipline`), `src/screens/registry.ts` (+ `child_remark`).
+**Tests (new, 4):** `disciplineModel`, `studentDisciplineApi`, `DisciplineScreen`, `studentDiscipline.local` (opt-in); `registry.test.ts` extended (thirty-eight names).
+No `package.json`, native, Laravel or Next.js change; no new package. It reuses S9's shared list screen and its memory-only hooks unchanged.
+
+### How each requirement is met
+| Requirement | Result |
+|---|---|
+| view only; no write / edit / delete | no input or button exists on the screen (the test asserts zero buttons and no link); the staff entry routes and `student-care/discipline` are never referenced (code scan and request test) |
+| authenticated, token-bound request only | `POST studentDisciplineAPI` through F1's legacy transport: Bearer header, token, `type=API`, the session's student id; a caller's other ids are ignored |
+| data in memory only; no console logging; no persistent storage / cache / share / export | the S9 record hooks (`gcTime: 0`, `staleTime: 0`): the query data is dropped when the screen unmounts (tested); a test spies `console.log/info/warn/debug` and `SecureStore.setItemAsync` while rendering a sensitive note and finds no text and no write; a code scan of the three shared files finds no `console.`, storage, sharing or file-system use and no write call; no share / export control |
+| no unnecessary ids or sensitive fields | the server sends none; the parser reads only `discipline`, `message`, `discipline_date`, `flag` — a test feeds extra `id`, `student_id`, `created_by` and a teacher name and finds none of them in the output; the card shows only the type, date, flag word and message |
+| follow the backend's actual values; invent no business state | the **type** is shown exactly as stored (the web offers Bad, Good, Check, Excellent); the **flag** is shown in the backend's own words for its own coding (`1` Positive, `0` Neutral, `-1` Negative — `diciplineController.php:185-186`, `:333-334`, and the web form), a blank flag shows nothing, an unknown value is shown as sent; there is no "resolved / pending / severity" anything, and every pill is neutral-toned |
+| external links through F1 | the record has no link, file or URL; nothing is ever opened |
+| synthetic ids only; Q16 strict | see below |
+| no device / native work | none |
+
+### Tests — typecheck clean; full suite: **1028 passed, 0 failed, 44 skipped** (the eleven opt-in local suites) — S9c added 34 passing tests (was 994)
+| Suite | Covers |
+|---|---|
+| `disciplineModel.test.ts` (11) | the flag coding and its neutral tone, blank / `null` flag → no pill, unknown flag as sent; newest first (both date formats), unreadable dates last and shown as sent, ties keep the server order, no mutation, nothing dropped; type as sent with a plain default; message as plain text (an empty message keeps the row); only title, date, flag and message are carried; extra server fields never carried |
+| `studentDisciplineApi.test.ts` (7) | authenticated form-encoded call (identity block only, `type=API`, session student even if a caller passes another); **only its own URL, never a staff / entry / write route**; exact field mapping from the server's aliases (nulls → empty, ids / staff names ignored); non-list data and junk rows → empty; `Parameter Missing`; 401 + status `2`; 500 HTML / 419 / network |
+| `DisciplineScreen.test.tsx` (15) | registry mapping; loading → notes newest first with type, date, flag word and message; no invented states; view only (no input, no button, no link, no share / export / edit / delete text, nothing opened); empty state; 401; server error + Try again; `Parameter Missing`; stale banner; guards; per-user cache; tile `api` ignored; **query data dropped on unmount; no storage write, no console output; code scan** |
+| `registry.test.ts` | `child_remark` → `DisciplineScreen`; thirty-eight names |
+| existing suites | all unchanged and passing |
+
+### Verification against the local server (read-only, synthetic id, strict Q16, counts only)
+`php artisan serve --host=127.0.0.1 --port=8000`; a JWT signed locally for the **non-existent student `999999999` on tenant `1`**. The opt-in test drives the real client and fetcher over real HTTP and **asserts the count only, never printing or inspecting a body**: **3/3 passed** — **0** notes returned for the non-existent student; a bad token is `unauthorized`; exactly one POST to `studentDisciplineAPI` is made, with the Bearer token, `type=API` and the session student id, and no staff, entry or write route. The server log shows only `/studentDisciplineAPI`. The endpoint filters by the caller's own `student_id` (`diciplineController.php:296-301`), so a non-existent student can only receive an empty list; no real row was returned or inspected. Server stopped afterwards (port 8000 free).
+
+### Deviations
+1. **The flag words.** Showing "Positive / Neutral / Negative" for `1 / 0 / -1` is the one interpretation in the screen; it is the backend's and the web's own coding, not a new state. Unknown values are shown as sent, so nothing is lost if a school uses other values.
+2. Every pill is neutral-toned (no red for Negative) — a deliberate choice for a child's record; say if you want tones.
+3. Otherwise none: it is the S9 pattern with one more type.
+
+### Known limitations
+- **No real data was read** (Q16): the real wording of types and messages, the real flag values in use, and note volumes are verified from code only.
+- **Not run on a device** (long messages wrap — checklist as for S9).
+- **Backend:** no ownership check on the endpoint (student id from the request); `flag` is stored as a number and the type is free text.
+
+### Rollback
+Delete the `child_remark` line in `src/screens/registry.ts` (the tile falls back to `GenericDataScreen`, today's behaviour) or `git revert` the S9c commit; the additions are additive and unused afterwards. JS-only; no server or data change; nothing is stored on the device.
+

@@ -2,6 +2,7 @@ import React from 'react';
 import {
   useCertificates,
   useConsents,
+  useDiscipline,
   useHealthRecords,
   useHeightWeight,
   useInfirmaryRecords,
@@ -10,7 +11,7 @@ import {
 } from '../../hooks/useStudentRecords';
 import { MenuTile } from '../../menu/types';
 import { RecordListScreen } from './RecordListScreen';
-import { certificateRows, consentRows, healthRows, heightWeightRows, infirmaryRows, transportRows, vaccinationRows } from './recordsModel';
+import { certificateRows, consentRows, disciplineRows, healthRows, heightWeightRows, infirmaryRows, transportRows, vaccinationRows } from './recordsModel';
 
 type TileProps = { tile: MenuTile };
 
@@ -52,4 +53,10 @@ export function TransportScreen(_props: TileProps) {
 export function CertificatesScreen(_props: TileProps) {
   const q = useCertificates();
   return <RecordListScreen q={q} build={certificateRows} caption={year} emptyTitle={(y) => `No certificates for school year ${y}`} />;
+}
+
+/** Student Discipline (S9c): the same sensitive-data handling as the health lists - in memory only while open, never logged or persisted. */
+export function DisciplineScreen(_props: TileProps) {
+  const q = useDiscipline();
+  return <RecordListScreen q={q} build={disciplineRows} caption={year} emptyTitle={(y) => `No discipline records for school year ${y}`} />;
 }

@@ -867,3 +867,29 @@ export async function fetchDiscussion(id: string): Promise<DiscussionDetail> {
     }),
   };
 }
+
+// ---------------------------------------------------------------------------------------------
+// S9c - Student Discipline (VIEW ONLY). Legacy READ endpoint, JWT checked on every call. A child's behaviour record: held in
+// memory only while its screen is open, never logged or persisted. The staff discipline entry routes (and student-care/discipline)
+// are never called (docs/migration/modules/S9-my-records.md §18).
+// ---------------------------------------------------------------------------------------------
+
+/** One discipline note. The server sends no id; none is read. */
+export interface DisciplineRecord {
+  /** The stored type, as staff chose it (the web offers Bad, Good, Check, Excellent). */
+  type: string;
+  message: string;
+  /** `date_` as sent. */
+  date: string;
+  /** `1` Positive, `0` Neutral, `-1` Negative (the backend's and the web's own coding); anything else is kept as sent. */
+  flag: string;
+}
+
+/** `POST studentDisciplineAPI` (routes/student.php:183; diciplineController.php:276-). Envelope `status`. The query aliases `dicipline as discipline`. */
+export const fetchDiscipline = () =>
+  fetchRecords<DisciplineRecord>('studentDisciplineAPI', (r) => ({
+    type: text(r.discipline),
+    message: text(r.message),
+    date: text(r.discipline_date),
+    flag: text(r.flag),
+  }));

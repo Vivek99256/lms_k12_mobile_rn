@@ -7,7 +7,7 @@ import { FeesSummaryScreen } from '../src/screens/student/FeesSummaryScreen';
 import { HolidayListScreen } from '../src/screens/student/HolidayListScreen';
 import { HomeworkScreen } from '../src/screens/student/HomeworkScreen';
 import { NotificationHubScreen } from '../src/screens/student/NotificationHubScreen';
-import { CertificatesScreen, ConsentScreen, HealthDetailsScreen, HeightWeightScreen, InfirmaryScreen, TransportScreen, VaccinationScreen } from '../src/screens/student/RecordScreens';
+import { CertificatesScreen, ConsentScreen, DisciplineScreen, HealthDetailsScreen, HeightWeightScreen, InfirmaryScreen, TransportScreen, VaccinationScreen } from '../src/screens/student/RecordScreens';
 import { PhotoGalleryScreen, VideoGalleryScreen } from '../src/screens/student/GalleryScreen';
 import { SchoolInfoScreen } from '../src/screens/student/SchoolInfoScreen';
 import { SocialCollaborativeScreen } from '../src/screens/student/SocialCollaborativeScreen';
@@ -82,6 +82,10 @@ describe('screenRegistry', () => {
     expect(screenRegistry.live_lecture).toBe(RecordUnavailableScreen);
   });
 
+  it('maps the S9c Student Discipline tile (child_remark) to its view-only list', () => {
+    expect(screenRegistry.child_remark).toBe(DisciplineScreen);
+  });
+
   it('has exactly the registered student screens and claims no staff names (they keep their existing fallback)', () => {
     expect(Object.keys(screenRegistry).sort()).toEqual([
       'about_us',
@@ -89,6 +93,7 @@ describe('screenRegistry', () => {
       'academic_calendar',
       'achievement',
       'achievement_certificate',
+      'child_remark',
       'circular_events',
       'classwork_gallery',
       'exam_schedule',

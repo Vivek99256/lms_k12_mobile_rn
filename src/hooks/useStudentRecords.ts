@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
   fetchCertificates,
   fetchConsents,
+  fetchDiscipline,
   fetchHealthRecords,
   fetchHeightWeight,
   fetchInfirmaryRecords,
@@ -35,3 +36,4 @@ export const useInfirmaryRecords = () => useRecordQuery('student-infirmary-recor
 export const useConsents = () => useRecordQuery('student-consents', fetchConsents);
 export const useTransport = () => useRecordQuery('student-transport', fetchTransport);
 export const useCertificates = () => useRecordQuery('student-certificates', fetchCertificates);
+export const useDiscipline = () => useRecordQuery('student-discipline', fetchDiscipline);

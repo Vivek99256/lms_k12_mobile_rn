@@ -10,7 +10,7 @@ import { HomeworkScreen } from './student/HomeworkScreen';
 import { NotificationHubScreen } from './student/NotificationHubScreen';
 import { LeaveApplicationsScreen } from './student/LeaveApplicationsScreen';
 import { ParentCommunicationScreen } from './student/ParentCommunicationScreen';
-import { CertificatesScreen, ConsentScreen, HealthDetailsScreen, HeightWeightScreen, InfirmaryScreen, TransportScreen, VaccinationScreen } from './student/RecordScreens';
+import { CertificatesScreen, ConsentScreen, DisciplineScreen, HealthDetailsScreen, HeightWeightScreen, InfirmaryScreen, TransportScreen, VaccinationScreen } from './student/RecordScreens';
 import { RecordUnavailableScreen } from './student/RecordUnavailableScreen';
 import { PhotoGalleryScreen, VideoGalleryScreen } from './student/GalleryScreen';
 import { ResultPdfScreen } from './student/ResultPdfScreen';
@@ -56,6 +56,8 @@ export const screenRegistry: Record<string, TileScreenComponent> = {
   student_consent: ConsentScreen,
   student_transport: TransportScreen,
   student_certificate: CertificatesScreen,
+  // S9c - Student Discipline, view only (studentDisciplineAPI; the tile's stored api is ignored).
+  child_remark: DisciplineScreen,
   // Hostel and Achievement Certificate cannot work for token callers (backend reads the school from session()):
   // an honest message, no request.
   student_hostel: RecordUnavailableScreen,

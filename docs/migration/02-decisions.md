@@ -324,3 +324,13 @@ How it was applied in S8: the local test requests the discussion list only with 
 - **Q16:** stays open with the strict rule: synthetic / non-existent ids only; never inspect real response bodies; never use broad endpoints to discover response shapes; if any synthetic request unexpectedly returns real data, stop immediately and report it.
 - **S9c — Student Discipline — approved as the next implementation (view only):** token-bound requests only; synthetic ids only for verification; data in memory only; no console logging; no persistent storage/cache/share/export; no write/edit/delete; no unnecessary ids or sensitive fields exposed; follow the backend's actual status/text values without inventing business states; external links validated through F1; no device/native work. Build and verify, **do not commit** until sign-off.
 
+## S9c implementation notes (2026-10-07)
+- Built as approved (view only, S9 sensitive-data standard). Details and the one interpretive choice (showing the backend's own 1 / 0 / -1 flag coding as Positive / Neutral / Negative, neutral-toned) are in the S9 document §19.
+- **Open:** review and sign-off of S9c; commit approval; the next sub-module; the coordinated device pass (explicit approval needed).
+
+## Answers received (2026-10-07, S9c sign-off → S13)
+- **S9c:** signed off as done; commit approved (the Student Discipline view-only screen, API/model/hook changes, S9c tests, registry changes, S9c documentation and tracker updates, the approved S9 memory-only handling; no Laravel, write functionality, device/native changes, secrets or generated files).
+- Security requirements stay approved: authenticated token-bound requests only; synthetic ids only for verification; data in memory only; no console logging; no persistent storage / cache / share / export; no write / edit / delete; no unnecessary sensitive fields or ids; external links through F1.
+- **Q16:** stays open and strict: no real database row is to be intentionally retrieved or inspected; synthetic / non-existent ids only; no broad endpoints to discover response shapes; if a synthetic request unexpectedly returns real data, stop and report it. **Device pass:** deferred.
+- **Next module:** the next planned module (S13 — Profile) — present its scope/design and stop for approval before implementation.
+

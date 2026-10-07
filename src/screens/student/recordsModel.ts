@@ -1,6 +1,7 @@
 import {
   CertificateRecord,
   ConsentRecord,
+  DisciplineRecord,
   HealthRecord,
   HeightWeightRecord,
   InfirmaryRecord,
@@ -183,4 +184,29 @@ export function certificateRows(items: CertificateRecord[]): RecordRow[] {
       text: body || undefined,
     };
   });
+}
+
+/**
+ * The backend's own coding of `flag`: 1 Positive, 0 Neutral, -1 Negative (diciplineController.php:185-186, :333-334 and the
+ * web's options). Nothing else is invented: a blank flag shows no pill, an unknown value is shown exactly as sent, and the pill
+ * is always neutral-toned (no judgement colours on a child's record).
+ */
+export function disciplineFlag(raw: string): { label: string; tone: PillTone } | undefined {
+  const s = cleanText(raw);
+  if (!s) return undefined;
+  if (s === '1') return { label: 'Positive', tone: 'neutral' };
+  if (s === '0') return { label: 'Neutral', tone: 'neutral' };
+  if (s === '-1') return { label: 'Negative', tone: 'neutral' };
+  return { label: s, tone: 'neutral' };
+}
+
+/** Newest first by the note's date; unreadable dates last (shown as sent); ties keep the server order. The message is plain text. No id is carried. */
+export function disciplineRows(items: DisciplineRecord[]): RecordRow[] {
+  return newestFirst(items, (r) => r.date).map(({ item: r, at }) => ({
+    key: `${at}`,
+    title: cleanText(r.type) || 'Discipline note',
+    date: displayDate(r.date),
+    status: disciplineFlag(r.flag),
+    fields: field('Message', r.message),
+  }));
 }
