@@ -1,4 +1,5 @@
 import { api } from './client';
+import { ApiError } from './errors';
 import { legacy } from './legacy';
 
 /** One row of `attendance_student` as `POST studentAttendanceAPI` returns it. */
@@ -242,4 +243,155 @@ export interface ExamEntry {
 export async function fetchExamSchedule(): Promise<ExamEntry[]> {
   const res = await legacy.post<unknown>('studentExamScheduleAPI');
   return list(res.data, (r) => ({ title: text(r.title), date: text(r.date_), file: text(r.file_name) }));
+}
+
+// ---------------------------------------------------------------------------------------------
+// S4a - student homework (view only). Modern token-bound API: the student comes from the JWT, never from the request.
+// The legacy studentHomeworkAssignmentAPI is deliberately NOT used (no ownership check, no due date or status).
+// ---------------------------------------------------------------------------------------------
+
+const asBool = (v: unknown): boolean => v === true || v === 1 || v === '1' || v === 'true';
+const numOrNull = (v: unknown): number | null => {
+  if (v === null || v === undefined || v === '') return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+};
+
+export interface HomeworkFile {
+  id: string;
+  /** The submitted file's original name, or ''. */
+  name: string;
+  /** Absolute URL built by the server from the request host; checked by the screen before it is opened. */
+  url: string;
+}
+
+const homeworkFile = (r: Record<string, unknown>): HomeworkFile => ({
+  id: text(r.id),
+  name: text(r.original_name),
+  url: text(r.file_url),
+});
+
+/** One row of `POST lms-homework/my-submissions` (the web's own student list). */
+export interface HomeworkItem {
+  id: string;
+  title: string;
+  subject: string;
+  /** Assigned date as sent (`YYYY-MM-DD`, falling back to the `DD-MM-YYYY` copy). */
+  date: string;
+  /** Due date as sent. */
+  dueDate: string;
+  /** `null` means not submitted; otherwise the submission status (`Pending`, `Submitted`, `Under Review`, `Reviewed`, `Rejected`, ...). */
+  status: string | null;
+  fileCount: number;
+  aiStatus: string;
+}
+
+export function parseHomeworkList(data: unknown): HomeworkItem[] {
+  return list(data, (r) => {
+    const status = r.status === null || r.status === undefined ? null : text(r.status).trim();
+    return {
+      id: text(r.id),
+      title: text(r.title),
+      subject: text(r.subject_name),
+      date: text(r.date) || text(r.date_fmt),
+      dueDate: text(r.submission_date) || text(r.submission_date_fmt),
+      status: status === '' ? null : status,
+      fileCount: Array.isArray(r.submission_files) ? r.submission_files.length : 0,
+      aiStatus: text(r.ai_status),
+    };
+  });
+}
+
+/** The student's own homework, newest first as the server orders it. Token-bound: the app sends no student id. */
+export async function fetchHomeworkList(): Promise<HomeworkItem[]> {
+  const res = await api.post<unknown>('api/lms-homework/my-submissions');
+  return parseHomeworkList(res.data);
+}
+
+export interface HomeworkSubmission {
+  status: string;
+  submittedAt: string;
+  remarks: string;
+  teacherRemarks: string;
+  aiStatus: string;
+  aiScore: number | null;
+  aiTotal: number | null;
+  aiPercentage: number | null;
+  feedbackPublished: boolean;
+  files: HomeworkFile[];
+}
+
+export interface HomeworkQuestion {
+  id: string;
+  /** Raw (may contain HTML): converted to plain text by the model before display. */
+  title: string;
+  description: string;
+  points: number | null;
+}
+
+export interface HomeworkDetail {
+  id: string;
+  title: string;
+  description: string;
+  subject: string;
+  standard: string;
+  division: string;
+  date: string;
+  dueDate: string;
+  teacher: string;
+  referenceUrl: string;
+  questions: HomeworkQuestion[];
+  /** `null` until the student has submitted (the server sends at most one entry). */
+  submission: HomeworkSubmission | null;
+}
+
+export function parseHomeworkDetail(data: unknown): HomeworkDetail {
+  const d = isRecord(data) ? data : {};
+  const h = isRecord(d.homework) ? d.homework : {};
+  const first = Array.isArray(d.submissions) ? d.submissions.find(isRecord) : undefined;
+  return {
+    id: text(h.id),
+    title: text(h.title),
+    description: text(h.description),
+    subject: text(h.subject_name),
+    standard: text(h.standard_name),
+    division: text(h.division_name),
+    date: text(h.date),
+    dueDate: text(h.submission_date),
+    teacher: text(h.teacher_name),
+    referenceUrl: text(h.reference_file_url),
+    questions: list(h.questions, (q) => ({
+      id: text(q.id),
+      title: text(q.question_title),
+      description: text(q.description),
+      points: numOrNull(q.points),
+    })),
+    submission: first
+      ? {
+          status: text(first.status),
+          submittedAt: text(first.submitted_at) || text(first.submitted_at_fmt),
+          remarks: text(first.submission_remarks),
+          teacherRemarks: text(first.teacher_remarks),
+          aiStatus: text(first.ai_status),
+          aiScore: numOrNull(first.ai_score),
+          aiTotal: numOrNull(first.ai_total_questions),
+          aiPercentage: numOrNull(first.ai_percentage),
+          feedbackPublished: asBool(first.feedback_published),
+          files: list(first.files, homeworkFile),
+        }
+      : null,
+  };
+}
+
+/** A homework id is digits only; it comes from a list row and goes into a URL path, so anything else is refused. */
+export const isHomeworkId = (id: string): boolean => /^\d{1,12}$/.test(id);
+
+/**
+ * One homework in full. `POST lms-homework/detail/{id}`: the server answers 404 for an unknown id and 403 for another
+ * student's row. The id is validated before any request is made.
+ */
+export async function fetchHomeworkDetail(id: string): Promise<HomeworkDetail> {
+  if (!isHomeworkId(id)) throw new ApiError('validation', 'This homework cannot be opened.');
+  const res = await api.post<unknown>(`api/lms-homework/detail/${id}`);
+  return parseHomeworkDetail(res.data);
 }

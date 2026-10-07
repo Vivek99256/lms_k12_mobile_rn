@@ -5,6 +5,7 @@ import { AttendanceScreen } from './student/AttendanceScreen';
 import { CircularsScreen } from './student/CircularsScreen';
 import { ExamScheduleScreen } from './student/ExamScheduleScreen';
 import { HolidayListScreen } from './student/HolidayListScreen';
+import { HomeworkScreen } from './student/HomeworkScreen';
 import { NotificationHubScreen } from './student/NotificationHubScreen';
 import { TimetableScreen } from './student/TimetableScreen';
 
@@ -26,6 +27,8 @@ export const screenRegistry: Record<string, TileScreenComponent> = {
   // S3 - timetable and exam schedule (studentTimetableAPI, studentExamScheduleAPI)
   time_table: TimetableScreen,
   exam_schedule: ExamScheduleScreen,
+  // S4a - homework list/detail, view only (lms-homework/my-submissions, lms-homework/detail/{id})
+  home_work: HomeworkScreen,
 };
 
 export function registerScreens(entries: Record<string, TileScreenComponent>) {

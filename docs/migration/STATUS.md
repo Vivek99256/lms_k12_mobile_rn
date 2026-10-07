@@ -10,13 +10,15 @@ Single source of status. Updated at the end of every reply. Rules and rationale:
 - **Step 3 — Document S1: APPROVED** (2026-10-07; Q17, Q18 incl. S1-D1…D6, Q19 all yes).
 - **Step 4 — Build S1: DONE, signed off 2026-10-07.** Committed as 27c5c66 on branch `migration/s1-student-home`.
 - **Step 3 — Document S3: APPROVED** (2026-10-07; Q21 yes, Q22 option c).
-- **Step 4 — Build S3: DONE, signed off 2026-10-07.** Committed on branch `migration/s3-timetable-exam-schedule`.
+- **Step 4 — Build S3: DONE, signed off 2026-10-07.** Committed as 7b4e45e on branch `migration/s3-timetable-exam-schedule`.
+- **Step 3 — Document S4a: APPROVED** (2026-10-07; Q23 yes, D1/D2 modern API with no legacy fallback, D6 AI score when evaluated).
+- **Step 4 — Build S4a: DONE, signed off 2026-10-07.** Committed on branch `migration/s4a-homework-view`. S4b is NOT approved and not started.
 
 ## Waiting on you
-Sign off S3 (or tell me what to change) and say whether to commit it. **Q16 stays open** (no real student data until you confirm the database environment). Plan the coordinated device/emulator pass for S1–S3 when you want it (needs your go-ahead: local native dev build, generated `android/`). Choose the next sub-module to document.
+Review and sign off S4a (or tell me what to change) and separately approve its commit. **Q16 stays open** (no real student data). The coordinated S1–S4a device pass still needs your explicit approval of the native build. Choose the next sub-module (build order: S6a/b fees → S5 results → S7 leave and communication → S9 → S10 → S8 → S13; S4b needs the F5 picker libraries first).
 
 ## Legend
-Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (web-only). Status: `planned → doc-approved → built → verified → done`. Statuses: F1 and S2 are `done`; S1 is `done`; S3 is `done`; everything else `planned`.
+Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (web-only). Status: `planned → doc-approved → built → verified → done`. Statuses: F1 and S2 are `done`; S1 is `done`; S3 is `done`; S4a is `done`; everything else `planned`.
 
 ## Foundation
 | ID | Sub-module | Class | Depends | Doc | Status |
@@ -33,7 +35,7 @@ Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (
 | S1 | Home dashboard, notification hub, circulars & events, academic calendar & holidays | V1 | circular needs `action`, 500 if no enrollment, JSON body breaks it (form-encoding required) | F1, S2 | [S1](modules/S1-student-home.md) | DONE (signed off 2026-10-07); real-data check deliberately pending (Q16) |
 | S2 | Attendance | V1 | no ownership check on server | F1 | [S2](modules/S2-student-attendance.md) | DONE (signed off 2026-10-07); real-data check deliberately pending, DB treated as possibly production (Q16) |
 | S3 | Timetable, exam schedule | V1 | weekday order is alphabetical (client re-sorts); batch periods concatenated; exam file links may be dead for teacher-mobile uploads | F1, S1 | [S3](modules/S3-timetable-exam-schedule.md) | DONE (signed off 2026-10-07); real-data and device checks deliberately pending (Q16; coordinated pass) |
-| S4a | Homework list/detail | V1 | needs `action` | F1,F3 | – | planned |
+| S4a | Homework list/detail (view only) | V1 | modern API needs a current academic year; list unpaged; real data unverified | F1, S1 | [S4a](modules/S4a-homework-view.md) | DONE (signed off 2026-10-07); real-data and device checks deliberately pending (Q16; coordinated pass) |
 | S4b | Homework submit (upload) | V1 | – | S4a,F5 | – | planned |
 | S5 | Results PDF, WRT progress | V1 | heavy/unsafe PDF endpoints | F1,F3 | – | planned |
 | S6a | Fees summary/detail | V1 | needs `type=API`; year row required | F1,F3 | – | planned |
@@ -92,7 +94,7 @@ Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (
 fees reports/masters/NACH · lms exam builder & analytics · pal staff authoring · h5p · student CRUD/reports/ID cards/certificates · result report cards/reports/masters · hrit policy & payroll · talent-management, organization-management, people-competency, capability-intelligence · enterprise-brain, ai, platform-* · Inventory/Transportation/hostel/library masters · front_desk masters · admin-services petty cash/consent master · easy_com gateway config · general, academic_setup, user, integration, Utility, teach-learn, imports, builders, authoring, placeholders. Nothing is dropped silently: each is listed in 03 §3.4.
 
 ## Baseline facts
-- Mobile repo after S3: `npm run typecheck` clean; `jest` 33 suites, **315 passed, 10 skipped (opt-in local tests), 0 failed** (after S1: 232; F1+S2: 100; original: 20). `npx expo export` for Android still bundles (1056 modules).
+- Mobile repo after S4a: `npm run typecheck` clean; `jest` 40 suites, **411 passed, 16 skipped (opt-in local tests), 0 failed** (after S3: 315; after S1: 232; F1+S2: 100; original: 20). `npx expo export` for Android still bundles (1063 modules).
 - Laravel and Next.js: read-only; not modified by this work.
 - Database: only `SELECT` run, only on `mobile_homescreen` and `teacher_mobile_homescreen`.
 
@@ -114,3 +116,6 @@ fees reports/masters/NACH · lms exam builder & analytics · pal staff authoring
 | 2026-10-07 | Q20: Metro bundles the app for Android (1049 modules) and iOS with no unresolved modules, so `expo-asset` was NOT installed; `package.json` untouched. |
 | 2026-10-07 | S3 research (controllers, web staff pages, Flutter reference, local probes with student 0) and S3 document written. Awaiting approval. |
 | 2026-10-07 | S3 approved (Q21 yes, Q22 option c). S3 built: timetable then exam schedule; 83 new tests; 315 passing; local verification with synthetic ids over real HTTP (10/10 opt-in tests, plus the localhost 419 check); S3 document updated with actuals. Awaiting sign-off; uncommitted. |
+| 2026-10-07 | S3 signed off and committed (7b4e45e, branch migration/s3-timetable-exam-schedule); pre-commit scan clean; S1/S2 source changed by additions only. |
+| 2026-10-07 | S4a research (legacy and modern homework endpoints, web student screens, Flutter reference, local probes with synthetic ids) and S4a document written. Awaiting approval. |
+| 2026-10-07 | S4a approved (Q23). S4a built, view only: filters, due-date sort, expandable detail, remarks/AI-score gating, HTML→text, 30-row batches; 96 new tests; 411 passing; local verification with synthetic ids over real HTTP (16/16 opt-in tests); S4a document updated with actuals. Awaiting review; uncommitted. |

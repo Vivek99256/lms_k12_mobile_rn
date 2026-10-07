@@ -161,3 +161,22 @@ A workaround is allowed only if it is safe, stable, maintainable, and does **not
 - **Device verification (standing instruction):** no native device/emulator build yet. After the next few student modules, **one coordinated verification pass** covering S1, S2 and S3 (and any module finished by then) — **you will explicitly approve the native build** when we reach it. Minimum scope for that pass: home/dashboard rendering; calendar and `MonthCalendar`; notifications; circulars/events; timetable day strip and scrolling; exam schedule; pull-to-refresh; loading/error/empty states; touch targets; navigation and web hand-off; Android bundle/native build behaviour.
 - **Next module:** the next student sub-module in the approved build order (03 §5): **S4a — Homework list/detail**. Document first; do not build.
 
+## S4a proposals (2026-10-07) — PROPOSED, see [S4a document](modules/S4a-homework-view.md) §3, §8, §16
+- **S4a-D1** use the modern token-bound API (`my-submissions` for the list, `detail/{id}` on expand) — the same one the web student screens use; it carries due date and status, pins the student from the token and ownership-checks the detail. **S4a-D2** no legacy fallback (the legacy endpoint is documented, not used). **S4a-D3** details expand in place (no new route). **S4a-D4** filters To do / Submitted / All, default To do. **S4a-D5** status wording as the web helper. **S4a-D6** teacher remarks only when feedback is published; AI score line only when evaluated, as the web detail does (alternative: hide it). **S4a-D7** question HTML stripped to plain text. **S4a-D8** 30-row "Show more".
+- **Open:** Q23 approve the S4a document and decisions (esp. D1/D2/D6); Q16 stays open; the coordinated device pass awaits your explicit approval of the native build.
+
+## Answers received (2026-10-07, S4a approval)
+- **Q23** yes — S4a document and S4a-D1…D8 approved. **D1** modern token-bound homework API. **D2** no legacy fallback: the legacy endpoint is not ownership-safe and stays unused unless a future real-data compatibility investigation proves it necessary and its security implications are addressed. **D6** show the AI score line when the homework is evaluated (as the web does), not otherwise.
+- **Q16** remains OPEN; synthetic / non-existent ids only. **Commit:** S4a stays uncommitted until you have reviewed it and separately approve the commit.
+- Requirements recorded: view only (no submission/upload — that is S4b); existing F1 client; no legacy `studentHomeworkAssignmentAPI`; reuse of S1's link validation; S1–S3 behaviour preserved; tests for filters, default To do, due-date sorting, empty state, loading/error/retry, 401, 404 detail, expand/collapse, remark and AI-score visibility, HTML → plain text, 30-row batches and file-link validation.
+
+## S4a implementation notes (2026-10-07)
+- Built as approved; deviations are small and listed in the S4a document §17 (id validation in the API layer, one row open at a time, counts in the chips, disabled-query case renders nothing, names of unopenable files still shown).
+- **Open:** review and sign-off of S4a; commit approval; the coordinated S1–S4a device pass (needs your explicit approval of the native build); next sub-module.
+
+## Answers received (2026-10-07, S4a sign-off → S6)
+- **S4a:** signed off as done; commit approved (S4a implementation, tests and related documentation only). **S4b is not approved and must not be started.**
+- **Q16:** stays OPEN — real student data off-limits; synthetic / non-existent ids and the local server only.
+- **Device verification:** the coordinated S1–S4a pass still requires your **explicit approval**; do not create the native Android project or run the emulator yet.
+- **Next module:** S6 — Fees. Document first; do not build. **No payment, receipt download or any financial mutation** unless the S6 document explicitly identifies that scope and you separately approve it.
+
