@@ -18,9 +18,11 @@ Single source of status. Updated at the end of every reply. Rules and rationale:
 - **Step 4 — Build S6a: DONE, signed off 2026-10-07.** Committed on branch `migration/s6a-fees-summary`. The `PaidUnpaid` backend defect stays a backend issue. S6b/c/d are NOT approved.
 - **Step 3 — Document S5 (results): APPROVED** (2026-10-07; Q27 option A, Q28 S5-D2…D6 yes incl. external-viewer-only opening, Q29 S5b/c/d future/blocker items).
 - **Step 4 — Build S5a: DONE, signed off 2026-10-07.** Committed on branch `migration/s5a-result-pdfs`. S5b/c/d are future/blocker items and must not be implemented.
+- **Step 3 — Document S7 (leave and communication): APPROVED** (2026-10-07; Q30 option A — build S7c, S7a, S7b view-only; Q31 S7-D2…D8 yes; Q32 S7d/S7e future scope).
+- **Step 4 — Build S7c + S7a + S7b: DONE, signed off 2026-10-07.** Committed on branch `migration/s7-leave-communication`. S7d/S7e are future scope and not implemented.
 
 ## Waiting on you
-Choose the next sub-module (S7 leave and communication is next in the approved order). **Q16 stays open** (no real student data). The coordinated S1–S5a device pass stays deferred and needs your explicit approval of the native build. S4b, S5b/c/d and S6b/c/d are not approved.
+Review the S9 scope/design (document to follow) and approve or adjust it. **Q16 stays open** (no real student data). The coordinated S1–S7 device pass stays deferred and needs your explicit approval of the native build. S4b, S5b/c/d, S6b/c/d, S7d/e are not approved.
 
 ## Legend
 Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (web-only). Status: `planned → doc-approved → built → verified → done`. Statuses: F1 and S2 are `done`; S1 is `done`; S3 is `done`; S4a is `done`; everything else `planned`.
@@ -50,8 +52,11 @@ Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (
 | S6b | Month-wise dues, paid-receipt list | V1 | Later / backend-dependent: `studentFeesDetailAPI` broken and unsafe | S6a | [S6](modules/S6-fees.md) §3, §9 | future scope; not documented |
 | S6c | Receipt view/download (financial document) | V1 | Later / separate financial-scope approval required | S6a | [S6](modules/S6-fees.md) §3 | future scope; not documented |
 | S6d | Online payment (financial action) | V1 (web-handoff) | Later / separate financial-action approval required | S6a | [S6](modules/S6-fees.md) §3 | future scope; not documented |
-| S7a | Leave list, parent communication list, subject teachers | V1 | needs `type` / `type=API` | F1,F3 | – | planned |
-| S7b | Leave apply (attachment), send communication | V1 | separate submit route; `attechment` | S7a,F5 | – | planned |
+| S7a | My leave applications (view only) | V1 | legacy `studentLeaveApplicationAPI`; unauthenticated without `type=API` (app always sends it), no ownership check, public attachment URLs; no row id/order | F1, S1 | [S7](modules/S7-leave-communication.md) | DONE (signed off 2026-10-07); real-data and device checks deliberately pending (Q16; coordinated pass) |
+| S7b | My messages to school + staff replies (view only) | V1 | legacy `studentParentcommunicationListAPI` (`status_code` envelope); the tile stores the WRITE endpoint `add_communicationAPI` (ignored) | F1, S1 | [S7](modules/S7-leave-communication.md) | DONE (signed off 2026-10-07); real-data and device checks deliberately pending (Q16; coordinated pass) |
+| S7c | Subject teachers (view only) | V1 | legacy `studentTeacherListAPI`; "Wrong Parameters" = no enrolment; teacher mobile/image never used | F1, S1 | [S7](modules/S7-leave-communication.md) | DONE (signed off 2026-10-07); real-data and device checks deliberately pending (Q16; coordinated pass) |
+| S7d | Apply for leave (WRITE; optional attachment) | V1 | Later: write operation; needs separate approval, safe non-production verification and F5 for the attachment | S7a, F5 | [S7](modules/S7-leave-communication.md) §0, §10 | future scope; not documented further |
+| S7e | Send a message to school (WRITE) | V1 | Later: write operation; needs separate approval and safe non-production verification | S7b | [S7](modules/S7-leave-communication.md) §0, §10 | future scope; not documented further |
 | S8a | Learn (subjects/content), social collaborative | V1 | content route unread | F1,F3 | – | planned |
 | S8b | Leaderboard, portfolio, virtual classroom | Later | 3 tenants | – | – | planned |
 | S8c | Live lecture | V1⛔ | no endpoint | – | – | planned |
@@ -103,7 +108,7 @@ Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (
 fees reports/masters/NACH · lms exam builder & analytics · pal staff authoring · h5p · student CRUD/reports/ID cards/certificates · result report cards/reports/masters · hrit policy & payroll · talent-management, organization-management, people-competency, capability-intelligence · enterprise-brain, ai, platform-* · Inventory/Transportation/hostel/library masters · front_desk masters · admin-services petty cash/consent master · easy_com gateway config · general, academic_setup, user, integration, Utility, teach-learn, imports, builders, authoring, placeholders. Nothing is dropped silently: each is listed in 03 §3.4.
 
 ## Baseline facts
-- Mobile repo after S5a: `npm run typecheck` clean; `jest` 49 suites (43 run, 6 opt-in skipped), **543 passed, 23 skipped (opt-in local tests), 0 failed** (after S6a: 476; S4a: 411; S3: 315; S1: 232; F1+S2: 100; original: 20).
+- Mobile repo after S7: `npm run typecheck` clean; `jest` 56 suites (49 run, 7 opt-in skipped), **638 passed, 29 skipped (opt-in local tests), 0 failed** (after S5a: 543; S6a: 476; S4a: 411; S3: 315; S1: 232; F1+S2: 100; original: 20).
 - Laravel and Next.js: read-only; not modified by this work.
 - Database: only `SELECT` run, only on `mobile_homescreen` and `teacher_mobile_homescreen`.
 
@@ -134,3 +139,6 @@ fees reports/masters/NACH · lms exam builder & analytics · pal staff authoring
 | 2026-10-07 | S5 research (web, production menu, Flutter reference, legacy and modern result endpoints, local probes with a non-existent student) and S5 document written. Proposes S5a only; S5b/c/d identified, not proposed. Laravel untouched; no file generated or deleted by the probes. Awaiting approval. |
 | 2026-10-07 | S5 approved (Q27 option A, Q28 yes, Q29 future/blocker items). S5a built, view only: term-wise result PDF list from `uploadResultAPI`, F1 link validation, external-viewer-only opening, blocked-endpoint tile state, no calculation; 67 new tests; 543 passing; local verification with a non-existent student over real HTTP (3/3 opt-in tests); S5 document updated with actuals. Awaiting review; uncommitted. |
 | 2026-10-07 | S5a signed off (DONE) and committed on branch migration/s5a-result-pdfs. |
+| 2026-10-07 | S7 research (web, production menu, Flutter reference, legacy read/write/staff endpoints; read-only local probes with a non-existent student; no write endpoint called) and S7 document written. Proposes S7a/b/c view-only; S7d/e writes identified, not proposed. Laravel untouched. Awaiting approval. |
+| 2026-10-07 | S7 approved (Q30 option A, Q31 yes, Q32 future scope). S7c, S7a, S7b built, view only: subject teachers (mobile/image dropped), leave list (newest first, empty status = Pending, staff reply, validated attachment), messages list (`status_code` envelope, reply/awaiting); 95 new tests; 638 passing; local verification with a non-existent student over real HTTP (6/6 opt-in tests; server log shows only the three read paths); S7 document updated with actuals. Awaiting review; uncommitted. |
+| 2026-10-07 | S7 (S7c, S7a, S7b) signed off (DONE) and committed on branch migration/s7-leave-communication. |

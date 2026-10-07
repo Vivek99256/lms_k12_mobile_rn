@@ -8,6 +8,9 @@ import { HolidayListScreen } from '../src/screens/student/HolidayListScreen';
 import { HomeworkScreen } from '../src/screens/student/HomeworkScreen';
 import { NotificationHubScreen } from '../src/screens/student/NotificationHubScreen';
 import { ResultPdfScreen } from '../src/screens/student/ResultPdfScreen';
+import { LeaveApplicationsScreen } from '../src/screens/student/LeaveApplicationsScreen';
+import { ParentCommunicationScreen } from '../src/screens/student/ParentCommunicationScreen';
+import { SubjectTeachersScreen } from '../src/screens/student/SubjectTeachersScreen';
 import { TimetableScreen } from '../src/screens/student/TimetableScreen';
 
 jest.mock('expo-secure-store', () => ({ getItemAsync: jest.fn(), setItemAsync: jest.fn(), deleteItemAsync: jest.fn() }));
@@ -41,6 +44,12 @@ describe('screenRegistry', () => {
     expect(screenRegistry.result_pdf).toBe(ResultPdfScreen);
   });
 
+  it('maps the three S7 tiles to their view-only screens', () => {
+    expect(screenRegistry.subjects).toBe(SubjectTeachersScreen);
+    expect(screenRegistry.leave_application).toBe(LeaveApplicationsScreen);
+    expect(screenRegistry.parent_communication).toBe(ParentCommunicationScreen);
+  });
+
   it('has exactly the registered student screens and claims no staff names (they keep their existing fallback)', () => {
     expect(Object.keys(screenRegistry).sort()).toEqual([
       'academic_calendar',
@@ -49,9 +58,12 @@ describe('screenRegistry', () => {
       'fees',
       'holiday_list',
       'home_work',
+      'leave_application',
       'notification_hub',
+      'parent_communication',
       'result_pdf',
       'student_attendance',
+      'subjects',
       'time_table',
     ]);
     expect(screenRegistry.t_take_attendance).toBeUndefined();

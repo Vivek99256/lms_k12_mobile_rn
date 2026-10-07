@@ -8,7 +8,10 @@ import { FeesSummaryScreen } from './student/FeesSummaryScreen';
 import { HolidayListScreen } from './student/HolidayListScreen';
 import { HomeworkScreen } from './student/HomeworkScreen';
 import { NotificationHubScreen } from './student/NotificationHubScreen';
+import { LeaveApplicationsScreen } from './student/LeaveApplicationsScreen';
+import { ParentCommunicationScreen } from './student/ParentCommunicationScreen';
 import { ResultPdfScreen } from './student/ResultPdfScreen';
+import { SubjectTeachersScreen } from './student/SubjectTeachersScreen';
 import { TimetableScreen } from './student/TimetableScreen';
 
 export type TileScreenComponent = React.ComponentType<{ tile: MenuTile }>;
@@ -35,6 +38,11 @@ export const screenRegistry: Record<string, TileScreenComponent> = {
   fees: FeesSummaryScreen,
   // S5a - result PDFs, view only (uploadResultAPI, legacy form-encoded; files open in the phone's viewer)
   result_pdf: ResultPdfScreen,
+  // S7 - subject teachers, leave applications and messages to school, view only (legacy read endpoints; the
+  // tiles' stored api is ignored - parent_communication stores the WRITE endpoint add_communicationAPI)
+  subjects: SubjectTeachersScreen,
+  leave_application: LeaveApplicationsScreen,
+  parent_communication: ParentCommunicationScreen,
 };
 
 export function registerScreens(entries: Record<string, TileScreenComponent>) {

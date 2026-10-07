@@ -226,3 +226,25 @@ A workaround is allowed only if it is safe, stable, maintainable, and does **not
 - **Device pass:** the coordinated S1–S5a pass stays deferred; one coordinated native/device pass after the next appropriate group of modules; no native Android project yet.
 - **Next module:** S7 — Leave and Communication. Document first; do not build. **No leave application, message sending, reply or other write operation** unless explicitly documented and separately approved.
 
+## S7 proposals (2026-10-07, awaiting your answers)
+- **Q30 / S7-D1** scope. A (recommended): build S7c subject teachers, S7a leave, S7b messages, all view-only, in that order. B: only S7a and S7b. C: do not build S7 now (backend-blocked), move to S9.
+- **Q31** S7-D2 legacy read endpoints only, dedicated screens ignore the tiles' stored `api` (the Parent Communication tile stores the write endpoint); D3 leave newest first by `apply_date`, empty status = Pending, replies only when non-empty; D4 attachments open only in the phone's browser/viewer after F1 link validation (no download, cache, share); D5 30-row batches, current year only; D6 teacher mobile number and image not shown or used; D7 "isn't available in the app yet" sentences for apply/send; D8 never call any write, staff, admin or HR endpoint listed in the S7 document §3.
+- **Q32** S7d (apply for leave) and S7e (send a message) are not proposed; both are writes needing separate approval, a confirmed non-production database (or mocked-transport-only tests) and, for the attachment, F5.
+- **Q16** stays OPEN.
+
+## Answers received (2026-10-07, S7 approval)
+- **Q30** option A — build S7c, S7a and S7b as view-only screens, in that order (subject teachers, my leave applications, my messages to school).
+- **Q31** yes — S7-D2…D8 as documented. D2: only the dedicated read endpoints; stored tile URLs and the generic tile endpoint behaviour are not used. D6: teacher mobile numbers and images are never displayed or used. D7: the wording "This isn't available in the app yet" for unavailable write functionality. All three screens strictly view only; attachment links validated through the F1 host allow-list before external opening; no download, cache, persistence or sharing; documented ordering and status behaviour kept; an empty leave status may show as Pending but no other status is invented.
+- **Security:** the unauthenticated-read behaviour of the legacy leave/message endpoints is a backend privacy defect; the app always sends the authenticated `type=API`/token-bound request and never weakens it; the defect is not fixed in S7.
+- **Q32** S7d (apply for leave) and S7e (send a message) are neither documented further nor built: later, write operations, separate approval and safe non-production verification required; S7d also needs the F5 file-picker dependency.
+- **Q16** remains OPEN. **Commit:** S7 stays uncommitted until you have reviewed it and separately approve the commit. **Device pass:** deferred.
+
+## S7 implementation notes (2026-10-07)
+- Built as approved; deviations are listed in the S7 document §17 (shared `listHelpers.ts`, no separate parse functions, exact D7 wording, grouped model tests, an extra real-client guard test, awaited unmount in tests).
+- **Open:** review and sign-off of S7; commit approval; the coordinated device pass (explicit approval needed); next sub-module.
+
+## Answers received (2026-10-07, S7 sign-off → S9)
+- **S7:** S7c, S7a and S7b signed off as done; commit approved (S7 code, tests, S7 documentation and tracker/decision updates; no Laravel, S7d/S7e, device/native, secrets or generated files). **S7d and S7e remain future scope and are not implemented.**
+- **Q16:** stays OPEN. **Device pass:** the coordinated native/device pass stays deferred.
+- **Next module:** S9. Provide the S9 scope/design first and stop for approval; no S9 implementation before approval.
+

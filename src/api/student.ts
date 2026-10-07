@@ -460,3 +460,87 @@ export async function fetchResultFiles(): Promise<ResultFile[]> {
   const res = await legacy.post<unknown>('uploadResultAPI');
   return list(res.data, (r) => ({ id: text(r.id), term: text(r.term_name), file: text(r.file_name) }));
 }
+
+// ---------------------------------------------------------------------------------------------
+// S7 - subject teachers, leave applications and messages to school (VIEW ONLY). Legacy READ endpoints only.
+// Never called: add_leave_application, add_communicationAPI (writes), teacher*/admin* endpoints, front_desk/* resource
+// routes, api/leave/* (docs/migration/modules/S7-leave-communication.md §3). The app always sends type=API + the
+// Bearer token (F1), which is what makes the two list endpoints run their JWT check; it never weakens that.
+// ---------------------------------------------------------------------------------------------
+
+/** One teacher of the student's class. The server also sends a mobile number and an image URL: both are dropped here on purpose. */
+export interface SubjectTeacher {
+  name: string;
+  /** Comma-joined subject names, as sent (`GROUP_CONCAT`). */
+  subjects: string;
+}
+
+/** The server's wording when the student has no enrolment (so no class) for the year. */
+export const NO_CLASS_MESSAGE = 'Wrong Parameters';
+
+/** `POST studentTeacherListAPI` (routes/student.php:180; studentAttendanceController.php:697-). "Wrong Parameters" means no class: an empty list. */
+export async function fetchSubjectTeachers(): Promise<SubjectTeacher[]> {
+  try {
+    const res = await legacy.post<unknown>('studentTeacherListAPI');
+    return list(res.data, (r) => ({ name: text(r.teacher_name), subjects: text(r.subject_name) }));
+  } catch (e) {
+    if (e instanceof ApiError && e.kind === 'validation' && e.message.trim() === NO_CLASS_MESSAGE) return [];
+    throw e;
+  }
+}
+
+/** One row of `studentLeaveApplicationAPI`. No id and no server order exist. Dates are `d-m-Y H:i:s` (apply/reply) and `Y-m-d` (from/to). */
+export interface LeaveApplication {
+  title: string;
+  message: string;
+  /** Empty, or an absolute URL the server built from its own host; the screen checks it before use. */
+  file: string;
+  appliedOn: string;
+  fromDate: string;
+  toDate: string;
+  /** Free text; empty while the school has not decided. */
+  status: string;
+  reply: string;
+  replyBy: string;
+  replyOn: string;
+}
+
+/** `POST studentLeaveApplicationAPI` (routes/student.php:186; leaveApplicationController.php:400-441), form-encoded by F1 with `type=API`. */
+export async function fetchLeaveApplications(): Promise<LeaveApplication[]> {
+  const res = await legacy.post<unknown>('studentLeaveApplicationAPI');
+  return list(res.data, (r) => ({
+    title: text(r.title),
+    message: text(r.message),
+    file: text(r.files),
+    appliedOn: text(r.apply_date),
+    fromDate: text(r.from_date),
+    toDate: text(r.to_date),
+    status: text(r.status),
+    reply: text(r.reply),
+    replyBy: text(r.reply_by),
+    replyOn: text(r.reply_on),
+  }));
+}
+
+/** One row of `studentParentcommunicationListAPI`, newest first as sent. `created_at` is `Y-m-d H:i:s`, `reply_on` is `d-m-Y`. */
+export interface ParentMessage {
+  title: string;
+  message: string;
+  createdAt: string;
+  reply: string;
+  replyBy: string;
+  replyOn: string;
+}
+
+/** `POST studentParentcommunicationListAPI` (routes/student.php:243; parentCommunicationController.php:507-550): a `status_code` envelope, not `status`. */
+export async function fetchParentMessages(): Promise<ParentMessage[]> {
+  const res = await legacy.post<unknown>('studentParentcommunicationListAPI');
+  return list(res.data, (r) => ({
+    title: text(r.title),
+    message: text(r.message),
+    createdAt: text(r.created_at),
+    reply: text(r.reply),
+    replyBy: text(r.reply_by),
+    replyOn: text(r.reply_on),
+  }));
+}
