@@ -439,3 +439,24 @@ export async function fetchFeeSummary(): Promise<FeeSummary | null> {
     throw e;
   }
 }
+
+// ---------------------------------------------------------------------------------------------
+// S5a - student result PDFs (VIEW ONLY). Legacy `uploadResultAPI` lists the files the school uploaded for the
+// student and year. studentResultPDFAPI, api/result/all-results, api/result/cbse-1t5-result/pdf, current_result and
+// get_wrtreportAPI are deliberately never called (docs/migration/modules/S5-results.md §3). The app reads no marks.
+// ---------------------------------------------------------------------------------------------
+
+/** One row of `uploadResultAPI`: a term and the file link the server built (empty when nothing was uploaded). */
+export interface ResultFile {
+  id: string;
+  /** `academic_year.title` as sent (may be empty). */
+  term: string;
+  /** Empty, or an absolute URL built from the server's own host; the screen checks it before use. */
+  file: string;
+}
+
+/** `POST uploadResultAPI` (routes/result.php:133; upload_result_controller.php:242-284), form-encoded by F1. Student, tenant and year come from the session only. */
+export async function fetchResultFiles(): Promise<ResultFile[]> {
+  const res = await legacy.post<unknown>('uploadResultAPI');
+  return list(res.data, (r) => ({ id: text(r.id), term: text(r.term_name), file: text(r.file_name) }));
+}

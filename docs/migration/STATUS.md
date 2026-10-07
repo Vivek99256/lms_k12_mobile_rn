@@ -16,9 +16,11 @@ Single source of status. Updated at the end of every reply. Rules and rationale:
 
 - **Step 3 — Document S6 (fees): APPROVED** (2026-10-07; Q24 option A, Q25 S6-D2…D7 yes, Q26 S6b/c/d future scope only).
 - **Step 4 — Build S6a: DONE, signed off 2026-10-07.** Committed on branch `migration/s6a-fees-summary`. The `PaidUnpaid` backend defect stays a backend issue. S6b/c/d are NOT approved.
+- **Step 3 — Document S5 (results): APPROVED** (2026-10-07; Q27 option A, Q28 S5-D2…D6 yes incl. external-viewer-only opening, Q29 S5b/c/d future/blocker items).
+- **Step 4 — Build S5a: DONE, signed off 2026-10-07.** Committed on branch `migration/s5a-result-pdfs`. S5b/c/d are future/blocker items and must not be implemented.
 
 ## Waiting on you
-Choose the next sub-module (S5 results is next in the approved order). **Q16 stays open** (no real student data). The coordinated S1–S6a device pass still needs your explicit approval of the native build. S4b and S6b/c/d are not approved.
+Choose the next sub-module (S7 leave and communication is next in the approved order). **Q16 stays open** (no real student data). The coordinated S1–S5a device pass stays deferred and needs your explicit approval of the native build. S4b, S5b/c/d and S6b/c/d are not approved.
 
 ## Legend
 Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (web-only). Status: `planned → doc-approved → built → verified → done`. Statuses: F1 and S2 are `done`; S1 is `done`; S3 is `done`; S4a is `done`; everything else `planned`.
@@ -40,7 +42,10 @@ Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (
 | S3 | Timetable, exam schedule | V1 | weekday order is alphabetical (client re-sorts); batch periods concatenated; exam file links may be dead for teacher-mobile uploads | F1, S1 | [S3](modules/S3-timetable-exam-schedule.md) | DONE (signed off 2026-10-07); real-data and device checks deliberately pending (Q16; coordinated pass) |
 | S4a | Homework list/detail (view only) | V1 | modern API needs a current academic year; list unpaged; real data unverified | F1, S1 | [S4a](modules/S4a-homework-view.md) | DONE (signed off 2026-10-07); real-data and device checks deliberately pending (Q16; coordinated pass) |
 | S4b | Homework submit (upload) | V1 | – | S4a,F5 | – | planned |
-| S5 | Results PDF, WRT progress | V1 | heavy/unsafe PDF endpoints | F1,F3 | – | planned |
+| S5a | Result PDFs (term-wise files the school uploaded; view only) | V1 | legacy `uploadResultAPI` (22 of 34 tenants); no ownership check, public file URLs; real data unverified | F1, S1 | [S5](modules/S5-results.md) | DONE (signed off 2026-10-07); real-data and device checks deliberately pending (Q16; coordinated pass) |
+| S5b | WRT progress report (`get_wrtreportAPI`) | V1 | Later: requires an exam/session identifier and backend/data-flow clarification; heavy PDF generation, wipes a shared folder | F1, auth/session change | [S5](modules/S5-results.md) §3, §10 | future scope; not documented further |
+| S5c | `studentResultPDFAPI` tenant (1 of 34) | V1 | Blocked: authentication, SQL injection, ownership and destructive-file-operation risks | – | [S5](modules/S5-results.md) §3, §10 | blocked; that tile shows "not available in the app yet" under S5a |
+| S5d | Native marks / grades / percentages | Later | native marks are not available through a safe mobile API | – | [S5](modules/S5-results.md) §3 | future scope; not documented further |
 | S6a | Fees summary (view only, whole-year totals) | V1 (at risk) | legacy `fees/PaidUnpaid`; probable 500 for most students (join defect, documented not fixed); no modern API | F1, S1 | [S6](modules/S6-fees.md) | DONE (signed off 2026-10-07); real-data and device checks deliberately pending (Q16; coordinated pass) |
 | S6b | Month-wise dues, paid-receipt list | V1 | Later / backend-dependent: `studentFeesDetailAPI` broken and unsafe | S6a | [S6](modules/S6-fees.md) §3, §9 | future scope; not documented |
 | S6c | Receipt view/download (financial document) | V1 | Later / separate financial-scope approval required | S6a | [S6](modules/S6-fees.md) §3 | future scope; not documented |
@@ -98,7 +103,7 @@ Class: **V1** · **V1⛔** (V1 usage, backend blocked) · **Later** · **Web** (
 fees reports/masters/NACH · lms exam builder & analytics · pal staff authoring · h5p · student CRUD/reports/ID cards/certificates · result report cards/reports/masters · hrit policy & payroll · talent-management, organization-management, people-competency, capability-intelligence · enterprise-brain, ai, platform-* · Inventory/Transportation/hostel/library masters · front_desk masters · admin-services petty cash/consent master · easy_com gateway config · general, academic_setup, user, integration, Utility, teach-learn, imports, builders, authoring, placeholders. Nothing is dropped silently: each is listed in 03 §3.4.
 
 ## Baseline facts
-- Mobile repo after S6a: `npm run typecheck` clean; `jest` 45 suites (40 run, 5 opt-in skipped), **476 passed, 20 skipped (opt-in local tests), 0 failed** (after S4a: 411; S3: 315; S1: 232; F1+S2: 100; original: 20). One load-sensitive timing test in `text.test.ts` failed once under a parallel run and passes alone.
+- Mobile repo after S5a: `npm run typecheck` clean; `jest` 49 suites (43 run, 6 opt-in skipped), **543 passed, 23 skipped (opt-in local tests), 0 failed** (after S6a: 476; S4a: 411; S3: 315; S1: 232; F1+S2: 100; original: 20).
 - Laravel and Next.js: read-only; not modified by this work.
 - Database: only `SELECT` run, only on `mobile_homescreen` and `teacher_mobile_homescreen`.
 
@@ -126,3 +131,6 @@ fees reports/masters/NACH · lms exam builder & analytics · pal staff authoring
 | 2026-10-07 | S6 research (fee endpoints, web/Flutter/menu evidence, local probes with synthetic ids, PHP semantic checks) and S6 document written. Proposes S6a only; S6b/c/d identified, not proposed. Awaiting approval. |
 | 2026-10-07 | S6 approved (Q24 option A, Q25 yes, Q26 future scope only). S6a built, view only: ₹ Indian formatting, whole-year labels, no-retry query, fee-specific 500 message, strict amount parsing; 65 new tests; 476 passing; local verification with synthetic ids over real HTTP (4/4 opt-in tests); backend defect documented with evidence, not fixed; S6 document updated with actuals. Awaiting review; uncommitted. |
 | 2026-10-07 | S6a signed off (DONE) and committed on branch migration/s6a-fees-summary. The one transient text.test.ts timing failure is accepted as a parallel-run observation (final full run 476/476). |
+| 2026-10-07 | S5 research (web, production menu, Flutter reference, legacy and modern result endpoints, local probes with a non-existent student) and S5 document written. Proposes S5a only; S5b/c/d identified, not proposed. Laravel untouched; no file generated or deleted by the probes. Awaiting approval. |
+| 2026-10-07 | S5 approved (Q27 option A, Q28 yes, Q29 future/blocker items). S5a built, view only: term-wise result PDF list from `uploadResultAPI`, F1 link validation, external-viewer-only opening, blocked-endpoint tile state, no calculation; 67 new tests; 543 passing; local verification with a non-existent student over real HTTP (3/3 opt-in tests); S5 document updated with actuals. Awaiting review; uncommitted. |
+| 2026-10-07 | S5a signed off (DONE) and committed on branch migration/s5a-result-pdfs. |

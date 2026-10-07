@@ -204,3 +204,25 @@ A workaround is allowed only if it is safe, stable, maintainable, and does **not
 - **Device pass:** the coordinated S1–S6a pass stays deferred; no native Android project.
 - **Next module:** S5 — Student Results (document first; do not build).
 
+## S5 proposals (2026-10-07, awaiting your answers)
+- **Q27 / S5-D1** go/no-go for S5a (view-only list of school-uploaded result PDFs). A (recommended): build it. B: record S5 as backend-blocked and move to S7.
+- **Q28** S5-D2 legacy `uploadResultAPI` only; D3 row order (id ascending), "No file uploaded yet" / "can't be opened" states, and opening files in the phone's browser/viewer only (no in-app viewer, download, cache or share); D4 the one `studentResultPDFAPI` tenant sees "not available in the app yet" and no request is made; D5 no native marks/grades/percentages; D6 never call `studentResultPDFAPI`, `api/result/all-results`, `api/result/cbse-1t5-result/pdf`, `current_result`/`api/result/current-result` or `get_wrtreportAPI`.
+- **Q29** S5b/S5c/S5d not proposed; S5b needs a session/auth change first.
+- **Q16** stays OPEN.
+
+## Answers received (2026-10-07, S5 approval)
+- **Q27** option A — build S5a now: view-only term-wise result PDF list from `uploadResultAPI`.
+- **Q28** yes — S5-D2…D6 as documented. **D3:** result PDFs open only through the phone's browser or registered PDF viewer; no in-app viewer; no download, cache, persistence or sharing; F1 host/link validation before opening; unsafe links stay non-actionable with a clear message; no marks, percentages, grades or calculated results; no workaround for the backend authorization/public-link limits. Row order: id ascending unless the backend provides an explicit ordering field.
+- **Q29** S5b/S5c/S5d are neither documented nor built: S5b later (needs an exam/session identifier and backend/data-flow clarification); S5c blocked (authentication, SQL, ownership and destructive-file-operation risks); S5d later (no safe mobile API for native marks).
+- **Q16** remains OPEN. **Commit:** S5a stays uncommitted until you have reviewed it and separately approve the commit. **Device pass:** deferred.
+
+## S5a implementation notes (2026-10-07)
+- Built as approved; deviations are listed in the S5 document §18 (no separate parse function, "Open PDF" button text, screen split so a blocked tile creates no query, three-check local test, synchronous-throw handling, awaited unmount in tests).
+- **Open:** review and sign-off of S5a; commit approval; the coordinated device pass (explicit approval needed); next sub-module.
+
+## Answers received (2026-10-07, S5a sign-off → S7)
+- **S5a:** signed off as done; commit approved (S5a code, tests, S5 documentation and directly related tracker/decision updates). **S5b, S5c, S5d remain future/blocker scope and must not be implemented.**
+- **Q16:** stays OPEN — real student records and result files off-limits; the remote database is treated as potentially production.
+- **Device pass:** the coordinated S1–S5a pass stays deferred; one coordinated native/device pass after the next appropriate group of modules; no native Android project yet.
+- **Next module:** S7 — Leave and Communication. Document first; do not build. **No leave application, message sending, reply or other write operation** unless explicitly documented and separately approved.
+

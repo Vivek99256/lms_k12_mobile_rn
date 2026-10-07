@@ -7,6 +7,7 @@ import { FeesSummaryScreen } from '../src/screens/student/FeesSummaryScreen';
 import { HolidayListScreen } from '../src/screens/student/HolidayListScreen';
 import { HomeworkScreen } from '../src/screens/student/HomeworkScreen';
 import { NotificationHubScreen } from '../src/screens/student/NotificationHubScreen';
+import { ResultPdfScreen } from '../src/screens/student/ResultPdfScreen';
 import { TimetableScreen } from '../src/screens/student/TimetableScreen';
 
 jest.mock('expo-secure-store', () => ({ getItemAsync: jest.fn(), setItemAsync: jest.fn(), deleteItemAsync: jest.fn() }));
@@ -36,6 +37,10 @@ describe('screenRegistry', () => {
     expect(screenRegistry.fees).toBe(FeesSummaryScreen);
   });
 
+  it('maps the S5a tile to the result PDF screen', () => {
+    expect(screenRegistry.result_pdf).toBe(ResultPdfScreen);
+  });
+
   it('has exactly the registered student screens and claims no staff names (they keep their existing fallback)', () => {
     expect(Object.keys(screenRegistry).sort()).toEqual([
       'academic_calendar',
@@ -45,6 +50,7 @@ describe('screenRegistry', () => {
       'holiday_list',
       'home_work',
       'notification_hub',
+      'result_pdf',
       'student_attendance',
       'time_table',
     ]);

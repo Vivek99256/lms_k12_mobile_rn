@@ -8,6 +8,7 @@ import { FeesSummaryScreen } from './student/FeesSummaryScreen';
 import { HolidayListScreen } from './student/HolidayListScreen';
 import { HomeworkScreen } from './student/HomeworkScreen';
 import { NotificationHubScreen } from './student/NotificationHubScreen';
+import { ResultPdfScreen } from './student/ResultPdfScreen';
 import { TimetableScreen } from './student/TimetableScreen';
 
 export type TileScreenComponent = React.ComponentType<{ tile: MenuTile }>;
@@ -32,6 +33,8 @@ export const screenRegistry: Record<string, TileScreenComponent> = {
   home_work: HomeworkScreen,
   // S6a - fees summary, view only (fees/PaidUnpaid, legacy form-encoded; no payment or receipt)
   fees: FeesSummaryScreen,
+  // S5a - result PDFs, view only (uploadResultAPI, legacy form-encoded; files open in the phone's viewer)
+  result_pdf: ResultPdfScreen,
 };
 
 export function registerScreens(entries: Record<string, TileScreenComponent>) {
