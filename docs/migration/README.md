@@ -23,3 +23,6 @@ docs/migration/
 
 ## Rules in force (from the brief)
 Cite file:line for every endpoint/field/rule; "not found, searched in …" instead of guessing; reuse the repo's patterns; no new libraries without approval; never touch Laravel/Next.js; never drop a feature silently; one sub-module at a time; stop for approval at each gate.
+
+## Device / native pass
+[device-pass.md](device-pass.md) — scope of the coordinated Android device pass (awaiting approval; nothing native started).

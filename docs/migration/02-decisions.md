@@ -355,3 +355,13 @@ How it was applied in S8: the local test requests the discussion list only with 
 - **Q16:** remains open and strict. **No further feature implementation starts automatically.**
 - **Next step:** a coordinated Device / Native Pass — first a dedicated scope document covering the checks listed in your message; **the native build is not started** until you explicitly approve the pass. S4b / file-picker work and backend-fix follow-ups remain separate future work and are not mixed into the device pass.
 
+## Device / Native Pass proposals (2026-10-07, awaiting your answers)
+- **Q46** approve the pass: A (recommended) the full pass; B build + launch + login screen + manifest/security + release build only; C do not start.
+- **Q47** data source while Q16 is open: A a synthetic mock API (dev-only Node script in `tools/mock-api/`, no package, never bundled, records every request for the unsafe-endpoint audit) — recommended; B wait for a Q16 resolution and a test account; C none.
+- **Q48** native project location: a scratch copy / worktree outside the repo (recommended) or `prebuild` in the repo with `/android` and `/ios` added to `.gitignore`.
+- **Q49** who drives: I drive with `adb` (recommended) or you drive manually.
+- **Q50** release verification: a local release APK signed with the debug key, never distributed, no keystore created or committed.
+- **Q51** session-only `JAVA_HOME` (Android Studio's JDK) and `ANDROID_HOME`, with Gradle/Maven downloads — OK?
+- **Q52** install `expo-asset` only if the device run proves it necessary (and report it).
+- **Q16** stays OPEN and strict; the pass uses fabricated data only.
+
