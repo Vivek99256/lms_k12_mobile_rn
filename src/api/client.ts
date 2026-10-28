@@ -25,7 +25,7 @@ export interface RequestOptions {
   skipAuthHandling?: boolean;
   /** Add the ERP's type=API&sub_institute_id=&syear= convention. Default true. */
   withSession?: boolean;
-  /** GET only: send the token in the Authorization header alone, not repeated as `?token=` in the URL (api.session endpoints read the header). Default false. */
+  /** GET only: send the token in the Authorization header alone, not repeated as `?token=` in the URL (api.session endpoints read the header). Default true: the URL never carries the token. Pass `bearerOnly: false` only for an endpoint that insists on `?token=`. */
   bearerOnly?: boolean;
   /**
    * Call an ERP legacy endpoint (bare path such as `studentAttendanceAPI`): sends the identity block
@@ -150,7 +150,8 @@ export async function request<T = unknown>(
     // Sent as a bearer header AND `token`: the legacy api.session/JwtToken path looks for either.
     if (session.token) {
       headers.Authorization = `Bearer ${session.token}`;
-      if (method === 'GET' && !opts.bearerOnly) query.token = session.token;
+      // The header is enough (the server now reads it everywhere); a token in the URL ends up in access logs.
+      if (method === 'GET' && opts.bearerOnly === false) query.token = session.token;
     }
     body =
       method === 'GET'

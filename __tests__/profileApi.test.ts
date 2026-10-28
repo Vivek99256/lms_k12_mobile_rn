@@ -113,12 +113,14 @@ describe('fetchOwnProfile - errors', () => {
   });
 });
 
-describe('the existing default GET behaviour is untouched by bearerOnly (pinned)', () => {
-  it('another module\'s GET still repeats the token in the URL unless it opts in', async () => {
+describe('GET calls keep the token out of the URL by default (pinned)', () => {
+  it('another module\'s GET sends the token in the header only unless it opts in with bearerOnly: false', async () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { api } = require('../src/api/client') as typeof import('../src/api/client');
     fetchMock.mockReturnValue(respond(200, { success: true, data: [] }));
     await api.get('api/other');
-    expect(new URL(String(fetchMock.mock.calls[0][0])).searchParams.get('token')).toBe('jwt-secret-value');
+    expect(new URL(String(fetchMock.mock.calls[0][0])).searchParams.has('token')).toBe(false);
+    await api.get('api/other', { bearerOnly: false });
+    expect(new URL(String(fetchMock.mock.calls[1][0])).searchParams.get('token')).toBe('jwt-secret-value');
   });
 });

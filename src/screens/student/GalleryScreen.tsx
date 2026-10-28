@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { isSafeHttpUrl } from '../../utils/links';
 import { useAuthStore } from '../../auth/authStore';
 import { Button, Card, EmptyState, Page } from '../../components/ui';
 import { colors, fonts, spacing } from '../../config/theme';
@@ -66,7 +67,7 @@ function AlbumCard({ album, kind }: { album: Album; kind: GalleryKind }) {
     if (!url) return;
     setFailed(null);
     void Promise.resolve()
-      .then(() => Linking.openURL(url))
+      .then(() => { if (!isSafeHttpUrl(url)) throw new Error('unsafe link'); return Linking.openURL(url); })
       .catch(() => setFailed(e.key));
   };
 

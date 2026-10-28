@@ -13,11 +13,17 @@ beforeEach(() => {
 });
 
 describe('bearerOnly (opt-in; F1\'s default is unchanged)', () => {
-  it('by default a GET still repeats the token in the URL (existing F1 behaviour)', async () => {
+  it('by default a GET sends the token in the Authorization header only, never in the URL', async () => {
     await api.get('api/x');
-    const u = new URL(String(fetchMock.mock.calls[0][0]));
-    expect(u.searchParams.get('token')).toBe('jwt-secret');
-    expect(fetchMock.mock.calls[0][1].headers.Authorization).toBe('Bearer jwt-secret');
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(String(url)).not.toContain('jwt-secret');
+    expect(new URL(String(url)).searchParams.has('token')).toBe(false);
+    expect(init.headers.Authorization).toBe('Bearer jwt-secret');
+  });
+
+  it('bearerOnly: false is the explicit opt-in for an endpoint that insists on ?token=', async () => {
+    await api.get('api/x', { bearerOnly: false });
+    expect(new URL(String(fetchMock.mock.calls[0][0])).searchParams.get('token')).toBe('jwt-secret');
   });
 
   it('with bearerOnly the token is in the Authorization header only, and the rest of the request is unchanged', async () => {

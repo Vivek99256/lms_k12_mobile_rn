@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import React from 'react';
 import { Linking, Text, View } from 'react-native';
+import { isSafeHttpUrl } from '../../utils/links';
 import { api } from '../../api/client';
 import { userMessage } from '../../api/errors';
 import { Button, ErrorState, Page, styles } from '../../components/ui';
@@ -16,6 +17,7 @@ export function WebHandoffScreen({ tile }: { tile: MenuTile }) {
     mutationFn: async () => {
       const res = await api.post<{ url: string }>('api/mobile/web-handoff', { body: { web_url: tile.webUrl } });
       if (!res.data?.url) throw new Error('No link was returned.');
+      if (!isSafeHttpUrl(res.data.url)) throw new Error('The link was not valid.');
       await Linking.openURL(res.data.url);
     },
   });

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { isSafeHttpUrl } from '../../utils/links';
 import { isApiError, userMessage } from '../../api/errors';
 import { CircularItem, CircularKind } from '../../api/student';
 import { useAuthStore } from '../../auth/authStore';
@@ -84,7 +85,7 @@ function CircularCard({ item }: { item: CircularItem }) {
       </Pressable>
       {attachment ? (
         <View style={{ marginTop: spacing.sm }}>
-          <Button title="Open attachment" variant="secondary" onPress={() => void Linking.openURL(attachment).catch(() => {})} />
+          <Button title="Open attachment" variant="secondary" onPress={() => { if (isSafeHttpUrl(attachment)) void Linking.openURL(attachment).catch(() => {}); }} />
         </View>
       ) : null}
     </Card>

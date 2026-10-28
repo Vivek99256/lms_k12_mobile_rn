@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { Linking, StyleSheet, Text, View } from 'react-native';
+import { isSafeHttpUrl } from '../../utils/links';
 import { useAuthStore } from '../../auth/authStore';
 import { Button, Card, EmptyState, Page } from '../../components/ui';
 import { colors, fonts, spacing } from '../../config/theme';
@@ -64,7 +65,7 @@ function ExamCard({ item }: { item: ExamItem }) {
       </View>
       {file ? (
         <View style={{ marginTop: spacing.sm }}>
-          <Button title="Open schedule" variant="secondary" onPress={() => void Linking.openURL(file).catch(() => {})} />
+          <Button title="Open schedule" variant="secondary" onPress={() => { if (isSafeHttpUrl(file)) void Linking.openURL(file).catch(() => {}); }} />
         </View>
       ) : null}
     </Card>
